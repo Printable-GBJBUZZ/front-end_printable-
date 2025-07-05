@@ -2,14 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import {
-  HomeIcon,
-  DocumentTextIcon,
-  ClockIcon,
-  WalletIcon,
-  CloudIcon,
-  Cog6ToothIcon,
-} from "@heroicons/react/24/outline";
+
 
 type OrderStatus = "Shipped" | "Delivered" | "Processing" | "Cancelled";
 type Priority = "High" | "Normal";
@@ -232,23 +225,9 @@ export default function MyOrders() {
     );
 
   return (
-    <div className="min-h-screen bg-[#e9eaf0] py-10 px-10 flex flex-col">
-      <div className="flex max-w-7xl mx-auto gap-6">
-        {/* Sidebar - unchanged */}
-        <aside
-          className="w-80 bg-white rounded-2xl shadow-md p-6 flex flex-col"
-          style={{ height: "calc(100vh - 5rem)" }}
-        >
-          {/* ... existing sidebar code ... */}
-          <nav className="flex flex-col gap-1 mt-6">
-            <SidebarLink icon={HomeIcon} label="My Account" />
-            <SidebarLink icon={DocumentTextIcon} label="My Orders" active />
-            <SidebarLink icon={ClockIcon} label="History" />
-            <SidebarLink icon={WalletIcon} label="My Walt" />
-            <SidebarLink icon={CloudIcon} label="My Drive" />
-            <SidebarLink icon={Cog6ToothIcon} label="Settings" />
-          </nav>
-        </aside>
+    <div className="min-h-screen  flex flex-col">
+      <div className="flex  mx-auto gap-6">
+   
 
         {/* Main Content */}
         <main
