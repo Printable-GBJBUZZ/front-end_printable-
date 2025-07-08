@@ -23,7 +23,7 @@ const links = [
   { icon: MapPinIcon, label: "Address", path: "/myaddress" },
   { icon: CreditCardIcon, label: "Payment", path: "/payment" },
   { icon: CloudIcon, label: "My Space", path: "/space" },
-  { icon: StarIcon, label: "Favorites", path: "/favorites" },
+  { icon: StarIcon, label: "Favorites", path: "/favourite" },
   { icon: ChatBubbleLeftEllipsisIcon, label: "Chat", path: "/chat" },
 ];
 
