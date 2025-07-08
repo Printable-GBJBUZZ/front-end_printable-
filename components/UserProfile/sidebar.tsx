@@ -20,7 +20,7 @@ import { motion } from "framer-motion";
 const links = [
   { icon: HomeIcon, label: "My Account", path: "/myaccount" },
   { icon: DocumentTextIcon, label: "Orders", path: "/orders" },
-  { icon: MapPinIcon, label: "Address", path: "/address" },
+  { icon: MapPinIcon, label: "Address", path: "/myaddress" },
   { icon: CreditCardIcon, label: "Payment", path: "/payment" },
   { icon: CloudIcon, label: "My Space", path: "/space" },
   { icon: StarIcon, label: "Favorites", path: "/favorites" },
