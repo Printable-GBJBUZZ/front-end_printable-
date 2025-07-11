@@ -1,5 +1,10 @@
 "use client";
 
+interface PrintOptionsPageProps {
+  file: File;
+}
+
+
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { FaFilePdf, FaPlus } from "react-icons/fa";
@@ -18,7 +23,9 @@ interface UploadedFile {
   file: File;
 }
 
-export default function PrintOptionsPage() {
+export default function PrintOptionsPage({ file }: PrintOptionsPageProps) {
+    console.log("File received in PrintOptionsPage: ", file);
+    
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [selectedFileIds, setSelectedFileIds] = useState<Set<string>>(new Set());
   const [isToggled, setIsToggled] = useState(false);
@@ -29,6 +36,10 @@ export default function PrintOptionsPage() {
   );
   const [showAdvanced, setShowAdvanced] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+ 
+
+
 
   // Cleanup thumbnails to prevent memory leaks
   useEffect(() => {
@@ -52,6 +63,8 @@ export default function PrintOptionsPage() {
       return next;
     });
   };
+
+   
 
   const isSelected = (id: string) => selectedFileIds.has(id);
 
