@@ -1,7 +1,8 @@
 'use client';
 import dynamic from 'next/dynamic';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FaEllipsisH, FaFile, FaFileAlt, FaFilter, FaFolder, FaImage, FaList, FaPlus, FaSearch, FaThLarge, FaUpload, FaVideo } from 'react-icons/fa';
+import { FaPrint, FaDownload, FaShareAlt, FaStar, FaPencilAlt, FaTrashAlt } from 'react-icons/fa';
 import { RiStarFill } from 'react-icons/ri';
 
 // Dynamically import ReactApexChart to avoid SSR issues
@@ -91,6 +92,63 @@ export default function MySpacePage() {
     { name: 'May-scanner-2024.xlsx', type: 'Excel', size: '10 MB', date: 'Apr 19, 2025' },
   ];
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
+const [menuType, setMenuType] = useState<'file' | 'folder' | null>(null);
+
+
+const menuRef = useRef(null);
+
+useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (menuRef.current && !(menuRef.current as HTMLElement).contains(event.target as Node)) {
+      setOpenMenuIndex(null);
+      setMenuType(null);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, []);
+
+
+const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+const [renameValue, setRenameValue] = useState('');
+const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null); // Optional: Track which file/folder is being renamed
+const [selectedItem, setSelectedItem] = useState<any>(null);
+
+
+interface ActionDropdownProps {
+  onRename: () => void;
+}
+
+const ActionDropdown: React.FC<ActionDropdownProps> = ({ onRename }) => (
+  <div className="absolute right-0 mt-2 w-40 bg-white rounded-2xl shadow-xl z-50 text-sm">
+    <button className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100">
+      <FaPrint /> Quick Print
+    </button>
+    <button className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100">
+      <FaDownload /> Download
+    </button>
+    <button className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100">
+      <FaShareAlt /> Share
+    </button>
+    <button className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100">
+      <FaStar /> Favorite
+    </button>
+    <button
+      onClick={onRename}
+      className="flex items-center gap-2 w-full px-4 py-2 text-gray-700 hover:bg-gray-100"
+    >
+      <FaPencilAlt /> Rename
+    </button>
+    <button className="flex items-center gap-2 w-full px-4 py-2 text-red-600 hover:bg-red-50">
+      <FaTrashAlt /> Delete
+    </button>
+  </div>
+);
+
+
   return (
     <div className="bg-gray-100 p-6 min-h-screen">
       <div className="mx-auto bg-white rounded-xl p-6 space-y-6 shadow-sm">
@@ -101,11 +159,42 @@ export default function MySpacePage() {
           </div>
           <div className="flex gap-3">
             <button 
-              className="flex items-center gap-2 border border-gray-700 rounded-md text-gray-700 text-sm font-medium px-4 py-2 hover:bg-gray-100 transition-colors duration-200"
-              aria-label="Create new folder"
-            >
-              <FaPlus className="w-4 h-4" /> Create Folder
-            </button>
+  onClick={() => setIsModalOpen(true)}
+  className="flex items-center gap-2 border border-gray-700 rounded-md text-gray-700 text-sm font-medium px-4 py-2 hover:bg-gray-100 transition-colors duration-200"
+  aria-label="Create new folder"
+>
+  <FaPlus className="w-4 h-4" /> Create Folder
+</button>
+
+{isModalOpen && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-brightness-75">
+    <div className="bg-white p-6 rounded-3xl shadow-lg w-[400px]">
+      <h2 className="text-xl font-semibold mb-4">New Folder</h2>
+      <input
+        type="text"
+        defaultValue="Untitled folder"
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={() => setIsModalOpen(false)}
+          className="px-4 py-2 border border-[#0B005C] text-[#0B005C] rounded-md text-sm"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => {
+            setIsModalOpen(false);
+          }}
+          className="px-4 py-2 bg-[#0B005C] text-white rounded-md text-sm"
+        >
+          Create
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
             <button 
               className="flex items-center gap-2 bg-gray-900 text-white text-sm font-medium rounded-md px-5 py-2 hover:bg-gray-800 transition-colors duration-200"
               aria-label="Upload files"
@@ -237,37 +326,92 @@ export default function MySpacePage() {
             </button>
           </div>
         </div>
+
         {isGridView ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {folders.map((folder, index) => (
-              <div key={index} className="bg-gray-50 rounded-xl p-4 text-center hover:bg-gray-100 transition-colors duration-200">
-                <FaFolder className="w-12 h-12 mx-auto text-gray-600" aria-hidden="true" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">{folder.name}</h3>
-                <p className="text-xs text-gray-500">{folder.items}</p>
-                <p className="text-xs text-gray-500">{folder.date}</p>
-                {folder.starred && <RiStarFill className="w-4 h-4 text-yellow-400 mx-auto mt-1" aria-hidden="true" />}
-                <div className="mt-2">
-                  <FaEllipsisH className="cursor-pointer text-gray-500" aria-label="More actions" />
-                </div>
-              </div>
-            ))}
-            {files.map((file, index) => (
-              <div key={index} className="bg-gray-50 rounded-xl p-4 text-center hover:bg-gray-100 transition-colors duration-200">
-                {file.type === 'Image' && <img alt="Icon representing an image file" className="w-12 h-12 mx-auto" src="https://storage.googleapis.com/a1aa/image/99a8e7a6-faaa-43b2-e710-7fc231c08c5a.jpg" />}
-                {file.type === 'Document' && <img alt="Icon representing a PDF document file" className="w-12 h-12 mx-auto" src="https://storage.googleapis.com/a1aa/image/c9a2192a-f962-4fdd-c4a0-d9e0747ca44c.jpg" />}
-                {file.type === 'Word' && <img alt="Icon representing a Word document file" className="w-12 h-12 mx-auto" src="https://storage.googleapis.com/a1aa/image/838744c0-398f-4547-cf8d-56a95f9d9d70.jpg" />}
-                {file.type === 'Excel' && <img alt="Icon representing an Excel spreadsheet file" className="w-12 h-12 mx-auto" src="https://storage.googleapis.com/a1aa/image/9c92a9ce-cc6a-40b5-0831-33666e45f1b7.jpg" />}
-                <h3 className="mt-2 text-sm font-medium text-gray-900">{file.name}</h3>
-                <p className="text-xs text-gray-500">{file.type}</p>
-                <p className="text-xs text-gray-500">{file.size}</p>
-                <p className="text-xs text-gray-500">{file.date}</p>
-                <div className="mt-2">
-                  <FaEllipsisH className="cursor-pointer text-gray-500" aria-label="More actions" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
+  <div className="space-y-8">
+    {/* FOLDERS SECTION */}
+    {folders.length > 0 && (
+      <div>
+        <h3 className="text-sm font-semibold text-gray-700 mb-3 px-1">Folders</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {folders.map((folder, index) => (
+            <div key={index} className="bg-gray-50 rounded-xl p-4 text-center hover:bg-gray-100 transition-colors duration-200">
+              <FaFolder className="w-12 h-12 mx-auto text-gray-600" aria-hidden="true" />
+              <h3 className="mt-2 text-sm font-medium text-gray-900">{folder.name}</h3>
+              <p className="text-xs text-gray-500">{folder.items}</p>
+              <p className="text-xs text-gray-500">{folder.date}</p>
+              {folder.starred && <RiStarFill className="w-4 h-4 text-yellow-400 mx-auto mt-1" aria-hidden="true" />}
+              <div className="relative mt-2">
+  <FaEllipsisH
+    className="cursor-pointer text-gray-500"
+    onClick={() => {
+      setOpenMenuIndex(index);
+      setMenuType('folder');
+    }}
+  />
+  {openMenuIndex === index && menuType === 'folder' && (
+    <div ref={menuRef}>
+      <ActionDropdown
+  onRename={() => {
+    setSelectedItem(folder);
+    setRenameValue(folder.name);
+    setIsRenameModalOpen(true);
+    setOpenMenuIndex(null);
+  }}
+/>
+    </div>
+  )}
+</div>
+
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+            {/* FILES SECTION */}
+    {files.length > 0 && (
+      <div>
+        <h3 className="text-sm font-semibold text-gray-700 mb-3 px-1">Files</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {files.map((file, index) => (
+            <div key={index} className="bg-gray-50 rounded-xl p-4 text-center hover:bg-gray-100 transition-colors duration-200">
+              {file.type === 'Image' && <img alt="Image file" className="w-12 h-12 mx-auto" src="https://storage.googleapis.com/a1aa/image/99a8e7a6-faaa-43b2-e710-7fc231c08c5a.jpg" />}
+              {file.type === 'Document' && <img alt="PDF file" className="w-12 h-12 mx-auto" src="https://storage.googleapis.com/a1aa/image/c9a2192a-f962-4fdd-c4a0-d9e0747ca44c.jpg" />}
+              {file.type === 'Word' && <img alt="Word file" className="w-12 h-12 mx-auto" src="https://storage.googleapis.com/a1aa/image/838744c0-398f-4547-cf8d-56a95f9d9d70.jpg" />}
+              {file.type === 'Excel' && <img alt="Excel file" className="w-12 h-12 mx-auto" src="https://storage.googleapis.com/a1aa/image/9c92a9ce-cc6a-40b5-0831-33666e45f1b7.jpg" />}
+              <h3 className="mt-2 text-sm font-medium text-gray-900">{file.name}</h3>
+              <p className="text-xs text-gray-500">{file.type}</p>
+              <p className="text-xs text-gray-500">{file.size}</p>
+              <p className="text-xs text-gray-500">{file.date}</p>
+              <div className="relative mt-2">
+  <FaEllipsisH
+    className="cursor-pointer text-gray-500"
+    onClick={() => {
+      setOpenMenuIndex(index);
+      setMenuType('file');
+    }}
+  />
+  {openMenuIndex === index && menuType === 'file' && (
+    <div ref={menuRef}>
+      <ActionDropdown
+  onRename={() => {
+    setSelectedItem(file);
+    setRenameValue(file.name);
+    setIsRenameModalOpen(true);
+    setOpenMenuIndex(null);
+  }}
+/>
+    </div>
+  )}
+</div>
+
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+) : (
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="bg-gray-200 text-gray-700">
@@ -288,9 +432,28 @@ export default function MySpacePage() {
                   <td className="py-4 px-4">Folder</td>
                   <td className="py-4 px-4">{folder.items}</td>
                   <td className="py-4 px-4">{folder.date}</td>
-                  <td className="py-4 px-4 cursor-pointer">
-                    <FaEllipsisH aria-label="More actions" />
-                  </td>
+                  <td className="py-4 px-4 relative">
+  <FaEllipsisH
+    className="cursor-pointer"
+    onClick={() => {
+      setOpenMenuIndex(index);
+      setMenuType('folder');
+    }}
+  />
+  {openMenuIndex === index && menuType === 'folder' && (
+    <div ref={menuRef} className="absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white z-50">
+      <ActionDropdown
+  onRename={() => {
+    setSelectedItem(folder);
+    setRenameValue(folder.name);
+    setIsRenameModalOpen(true);
+    setOpenMenuIndex(null);
+  }}
+/>
+    </div>
+  )}
+</td>
+
                 </tr>
               ))}
               {files.map((file, index) => (
@@ -305,14 +468,67 @@ export default function MySpacePage() {
                   <td className="py-4 px-4">{file.type}</td>
                   <td className="py-4 px-4">{file.size}</td>
                   <td className="py-4 px-4">{file.date}</td>
-                  <td className="py-4 px-4 cursor-pointer">
-                    <FaEllipsisH aria-label="More actions" />
-                  </td>
+                  <td className="py-4 px-4 relative">
+  <FaEllipsisH
+    className="cursor-pointer"
+    onClick={() => {
+      setOpenMenuIndex(index);
+      setMenuType('file');
+    }}
+  />
+  {openMenuIndex === index && menuType === 'file' && (
+    <div ref={menuRef} className="absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white z-50">
+      <ActionDropdown
+  onRename={() => {
+    setSelectedItem(file);
+    setRenameValue(file.name);
+    setIsRenameModalOpen(true);
+    setOpenMenuIndex(null); 
+  }}
+/>
+    </div>
+  )}
+</td>
+
                 </tr>
               ))}
             </tbody>
           </table>
         )}
+
+        {isRenameModalOpen && (
+<div className="fixed inset-0 z-50 flex items-center justify-center backdrop-brightness-75">
+    <div className="bg-white rounded-3xl p-6 w-full max-w-md">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Rename</h2>
+        <button onClick={() => setIsRenameModalOpen(false)}>✕</button>
+      </div>
+      <input
+        className="w-full border border-[#0b0b47] rounded-xl px-4 py-2 text-sm mb-4"
+        value={renameValue}
+        onChange={(e) => setRenameValue(e.target.value)}
+      />
+      <div className="flex justify-end gap-3">
+        <button
+          className="border border-[#0b0b47] px-4 py-2 rounded-xl text-[#0b0b47]"
+          onClick={() => setIsRenameModalOpen(false)}
+        >
+          Cancel
+        </button>
+        <button
+          className="bg-[#0b0b47] text-white px-4 py-2 rounded-xl"
+          onClick={() => {
+            console.log("Renamed:", selectedItem, "to:", renameValue);
+            setIsRenameModalOpen(false);
+          }}
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       </div>
     </div>
   );
