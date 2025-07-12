@@ -188,7 +188,7 @@ export default function MySpacePage() {
                   <div className="w-2 h-6 rounded-sm bg-[#EC4899]" aria-hidden="true"></div>
                   <div>
                     <p className="text-sm font-semibold text-gray-900 flex items-center gap-1">
-                      <FaFile className="w-3 h-3" aria-hidden="true" /> Other Files
+                      <FaFile className="w-3 h-3" aria-hidden="true" /> Others Files
                     </p>
                     <p className="text-xs text-gray-400">232 MB</p>
                   </div>
