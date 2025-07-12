@@ -16,11 +16,13 @@ import {
 } from "@heroicons/react/24/outline";
 import { TbLogout2 } from "react-icons/tb";
 import { motion } from "framer-motion";
+import { Wallet } from "lucide-react";
 
 const links = [
   { icon: HomeIcon, label: "My Account", path: "/myaccount" },
   { icon: DocumentTextIcon, label: "Orders", path: "/orders" },
   { icon: MapPinIcon, label: "Address", path: "/myaddress" },
+  { icon: Wallet, label: "Printable Wallet", path: "/wallet" },
   { icon: CreditCardIcon, label: "Payment", path: "/payment" },
   { icon: CloudIcon, label: "My Space", path: "/space" },
   { icon: StarIcon, label: "Favorites", path: "/favourite" },

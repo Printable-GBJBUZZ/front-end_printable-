@@ -1,11 +1,12 @@
-// app/account/page.tsx@/components/UserProfile/myaccount/account
+// app/account/page.tsx
 "use client";
 
 import Sidebar from "@/components/UserProfile/sidebar"; 
 import { motion } from "framer-motion";
 // import MyOrders from "@/components/UserProfile/my_orders";
 // import SavedAddresses from "@/components/UserProfile/address/address";
-import AccountPage from "@/components/UserProfile/myaccount/account";
+import Wallet from "@/components/wallet/wallet";
+// import { Wallet } from "lucide-react";
 
 const mockUser = {
   name: "Jay Vasani",
@@ -24,7 +25,7 @@ export default function Page() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <AccountPage />
+        <Wallet />
       </motion.div>
     </div>
   );
