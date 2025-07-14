@@ -24,13 +24,13 @@ const links = [
   { icon: MapPinIcon, label: "Address", path: "/myaddress" },
   { icon: Wallet, label: "Printable Wallet", path: "/wallet" },
   { icon: CreditCardIcon, label: "Payment", path: "/payment" },
-  { icon: CloudIcon, label: "My Space", path: "/space" },
+  { icon: CloudIcon, label: "My Space", path: "/my-space" },
   { icon: StarIcon, label: "Favorites", path: "/favourite" },
   { icon: ChatBubbleLeftEllipsisIcon, label: "Chat", path: "/chat" },
 ];
 
 const settings = [
-  { icon: Cog6ToothIcon, label: "Settings", path: "/settings" },
+  { icon: Cog6ToothIcon, label: "Settings", path: "/my-setting" },
   { icon: QuestionMarkCircleIcon, label: "Help & Support", path: "/support" },
 ];
 
