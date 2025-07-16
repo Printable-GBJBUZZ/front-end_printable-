@@ -117,7 +117,7 @@ const tools = [
 export default function PdfToolsSection() {
   return (
     <div className="bg-white px-4 lg:px-[200px] md:px-[100px] sm:px-[100px] py-16 lg:h-[450px] h-auto w-full shadow-2xl overflow-x-hidden lg:overflow-y-hidden z-100">
-      <div className="flex flex-wrap gap-12 items-start">
+      <div className="flex flex-wrap  gap-14 items-start">
         {tools.map((group, index) => (
           <div
             key={index}

@@ -44,7 +44,7 @@ export function NavBar() {
       className="bg-[#06044b] text-white w-full z-50 relative"
       onMouseLeave={() => setHoveredItem(null)}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full mx-auto px-4 sm:px-6 ">
         <div className="flex items-center justify-between h-16">
           {/* Logo + Nav */}
           <div className="flex items-center">
@@ -52,7 +52,7 @@ export function NavBar() {
               <MainLogo />
             </Link>
 
-            <nav className="hidden md:flex md:space-x-2  items-center">
+            <nav className="hidden md:flex md:space-x-6  items-center lg:ml-8">
               <span
                 className="cursor-pointer hover:text-[#61e987] flex items-center gap-2"
                 onMouseEnter={() => setHoveredItem("tools")}

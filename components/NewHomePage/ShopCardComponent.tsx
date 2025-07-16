@@ -14,7 +14,7 @@ type PageCardCompomnentProps = {
 export default function PageCardComponent({ value }: PageCardCompomnentProps) {
   return (
     <div className="overflow-x-hidden">
-      <div className="flex justify-center items-center overflow-x-hidden">
+      <div className="flex justify-start items-center overflow-x-hidden">
         <div
           className="lg:w-[1200px]  md:w-[800px] sm:w-[600px] w-[350px]  overflow-x-auto scrollbar-hide  py-4"
           style={{

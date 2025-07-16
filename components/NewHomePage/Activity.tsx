@@ -42,7 +42,7 @@ export default function Activity() {
             My Recent Activity
           </h2>
 
-          <div className="flex gap-2 flex-wrap w-full justify-center">
+          <div className="flex gap-2 flex-wrap w-full justify-center lg:justify-start">
             <div className="lg:w-[48%] md:w-[45%] w-full h-auto px-4 py-4 bg-[#E6E6ED] rounded-[10px]">
               <div className="flex gap-2 items-center">
                 <FiFileText size={20} className="text-black" />{" "}

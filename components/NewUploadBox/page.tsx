@@ -37,7 +37,7 @@ export default function UplodeBox({
             Print your , way - upload , customize , and receive
           </p>
         </div>
-        <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl p-6 border border-gray-200">
+        <div className="w-full max-w-2xl bg-gray-200 rounded-3xl shadow-2xl p-6 border border-gray-200">
           <div className="flex gap-4 items-center pb-8">
             <div className="h-[70px] w-[70px] rounded-full bg-[#06044B] flex justify-center items-center">
               <FiFileText className="text-white" size={30} />

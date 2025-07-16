@@ -121,7 +121,7 @@ export default function FooterSection() {
     <div>
       <div className="overflow-x-hidden bg-[#EFFDF3] lg:px-[200px] md:px-[100px] sm:px-[100px] px-4">
         <footer className="bg-[#EFFDF3] py-10  overflow-x-hidden">
-          <div className="w-full  flex flex-wrap gap-4  mx-auto overflow-x-hidden">
+          <div className="w-full  flex flex-wrap lg:gap-14 gap-4  mx-auto overflow-x-hidden">
             {Footer.map((section, idx) => (
               <div key={idx} className="min-w-[120px]">
                 <h3 className="text-sm font-semibold mb-3 text-black">
@@ -273,16 +273,16 @@ export default function FooterSection() {
       </div>
 
       <div>
-        <div className="w-full h-auto lg:px-[200px] md:px-[100px] sm:px-[100px] px-4 py-6 bg-[#06044B]">
-          <div className="flex lg:justify-between md:justify-between sm:justify-between justify-center flex-wrap items-center">
-            <div className="flex items-center gap-1 text-white text-sm">
+        <div className="w-full h-auto lg:px-[200px] md:px-[100px] sm:px-[100px] px-0 py-6 bg-[#06044B]">
+          <div className="flex lg:justify-between md:justify-between sm:justify-between justify-center flex-wrap items-center gap-4 px-2">
+            <div className="flex items-center gap-1 text-white lg:text-sm md:text-sm sm:text-sm text-[12px]">
               <p>2025 Printable</p>
               <GoDotFill className="text-white" />
               <p>All Right Reserved</p>
             </div>
 
             <div className="mt-4 lg:mt-0 md:mt-0 sm:mt-0">
-              <div className="flex gap-4">
+              <div className="flex gap-4  items-center">
                 <Link href="https://www.instagram.com" target="_blank">
                   <FaInstagram
                     size={20}

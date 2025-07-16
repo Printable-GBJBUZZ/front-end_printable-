@@ -85,7 +85,7 @@ export default function PageCard() {
   ];
 
   return (
-    <div className="mt-8 lg:pl-[200px] md:pl[100px] sm:pl[100px] pl-4 bg-gray-100">
+    <div className="mt-8 lg:pl-[200px] md:pl[100px] sm:pl[100px] pl-4 bg-gray-100 pt-10 ">
       <h2 className="lg:text-[32px] md:text-[24px] font-semibold text-gray-800 mb-4 text-center lg:text-start md:text-start sm:text-start">Print Shops</h2>
       <PageCardComponent value={shops} />
     </div>

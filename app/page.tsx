@@ -50,7 +50,7 @@ export default function Page() {
   }, []);
 
   return (
-    <div>
+    <div className="overflow-x-hidden">
       {/* Page layout */}
       <div className="flex flex-col items-center bg-gray-100 min-h-screen lg:px-[200px] md:px-[100px] sm:px-[100px] px-4">
         <div className="flex lg:flex-nowrap flex-wrap w-full min-h-[400px] items-center gap-4 lg:py-16 md:py-16 sm:py-16 py-4">

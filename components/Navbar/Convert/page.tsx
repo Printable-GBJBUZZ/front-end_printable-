@@ -41,7 +41,7 @@ const ConvertTools = () => {
           {convertFromPDF.map((item, idx) => (
             <li key={idx}>
               <Link href={item.link}>
-                <div className="flex items-center gap-2 text-[12px] text-black hover:text-white hover:bg-[#06044B] px-2 py-1 rounded-md transition-all duration-200">
+                <div className="flex  justify-evenly  gap-2 text-[12px] text-black hover:text-white hover:bg-[#06044B] px-2 py-1 rounded-md transition-all duration-200">
                   <div className="bg-[#06044B] text-white p-1.5 rounded-md text-[12px]">
                     {item.icon}
                   </div>
