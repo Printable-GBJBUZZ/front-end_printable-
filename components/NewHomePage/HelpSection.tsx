@@ -8,8 +8,8 @@ export default function HelpSection() {
           <div>
             <div>
               {" "}
-              <h3 className="text-[32px]">Need Help?</h3>
-              <p className="text-[12px]">Our support team is here to help</p>
+              <h3 className="text-[32px] text-white">Need Help?</h3>
+              <p className="text-[12px] text-white">Our support team is here to help</p>
             </div>
 
             <div className="py-4 flex justify-center items-center">
