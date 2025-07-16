@@ -14,12 +14,12 @@ export default function Categories() {
 
   return (
     <div >
-      <div className="lg:pl-[200px] md:pl-[100px] sm:pl-[100px] pl-4 pb-30">
+      <div className="lg:pl-[200px] md:pl-[100px] sm:pl-[100px] pl-4 pb-30 bg-white">
         <div>
           <h1 className="text-black text-[32px] text-center lg:text-start md:text-start sm:text-start">
             Explore all Categories
           </h1>
-          <div className="flex lg:justify-start justify-center lg:gap-28 gap-10 flex-wrap items-center">
+          <div className="flex lg:justify-start justify-center lg:gap-24 gap-10 flex-wrap items-center pl-8">
             {categories.map((item, idx) => (
               <div
                 key={idx}
