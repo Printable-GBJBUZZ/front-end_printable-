@@ -13,6 +13,8 @@ import {
   sendSignRequestEmail,
   UploadDocument,
 } from "../components/utils/apiCalls";
+import { Download } from "lucide-react";
+const DOMAIN_BASE_URL = process.env.FRONTEND_PRINTABLE_URL || "http://localhost:3000";
 import { drawSignatureOnPdf } from "../components/utils/pdfUtils";
 import { useSignUrl } from "../useSign";
 
@@ -63,7 +65,7 @@ function SignDocument() {
     const updatedSigns = signs.map((sign, index) =>
       sign.type === "documentId"
         ? { ...sign, value: `Printable.com Document ID: ${fileId}` }
-        : sign
+        : sign,
     );
 
     // Update the signs state
