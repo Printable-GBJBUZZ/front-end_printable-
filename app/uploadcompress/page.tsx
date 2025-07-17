@@ -1,6 +1,6 @@
-"use client";
+"use client"
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState  , Suspense} from "react";
 import { useFileContext } from "../pdfcompress/FileContext";
 
 export default function UploadPage() {
@@ -352,5 +352,6 @@ export default function UploadPage() {
         </div>
       )}
     </div>
+   
   );
 }

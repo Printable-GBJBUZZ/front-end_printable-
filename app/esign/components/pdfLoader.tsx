@@ -1,40 +1,62 @@
 "use client";
-
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import PdfCanvasPage from "./pdfCanvasPage";
 import { drawSignatureOnPdf } from "./utils/pdfUtils";
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
-import { useSignUrl } from "../useSign";
 
+import { useSignUrl } from "../useSign";
+import { SignData } from "../components/utils/pdfUtils";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js`;
 
 const PdfLoader = ({ pdfUrl }: { pdfUrl: string }) => {
   const { signs, setPdfData, addSign } = useSignUrl();
   const [pdfData, setPdfBuffer] = useState<ArrayBuffer | null>(null);
   const [pdfPages, setPdfPages] = useState<any[]>([]);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(1.5); // Start with higher scale for better quality
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Mouse wheel zoom handler
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault();
+        setScale((prev) => {
+          let next = prev + (e.deltaY < 0 ? 0.02 : -0.02); // Smaller step for smoothness
+          next = Math.max(0.5, Math.min(next, 4));
+          return next;
+        });
+      }
+    };
+    container.addEventListener("wheel", handleWheel, { passive: false });
+    return () => container.removeEventListener("wheel", handleWheel);
+  }, []);
 
   const loadPdf = async (url: string, newScale: number) => {
     const loadingTask = pdfjsLib.getDocument(url);
     const pdf = await loadingTask.promise;
     const pages = [];
     for (let i = 1; i <= pdf.numPages; i++) {
-      const options = {
+      const options: SignData = {
         type: "documentId" as "documentId",
-        value: "",
+        value: "true", // Make sure it's a string
         color: "#80919E",
         fontSize: 10,
         signSize: { width: 100, height: 30 },
         position: { x: 380, y: 5, pageIndex: i - 1 },
       };
+
       addSign(options);
       const page = await pdf.getPage(i);
       const rotation = page.rotate;
-      const viewport = page.getViewport({ scale: newScale, rotation });
+      // Use devicePixelRatio for sharper rendering
+      const deviceScale = newScale * (window.devicePixelRatio || 1);
+      const viewport = page.getViewport({ scale: deviceScale, rotation });
       pages.push({ page, viewport });
     }
-
+    console.log("file url", url);
     const bytes = await fetch(url).then((res) => res.arrayBuffer());
     setPdfBuffer(bytes);
     setPdfData(bytes);
@@ -44,6 +66,7 @@ const PdfLoader = ({ pdfUrl }: { pdfUrl: string }) => {
   useEffect(() => {
     if (!pdfUrl) return;
     loadPdf(pdfUrl, scale);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pdfUrl, scale]);
 
   const handleDownload = async () => {
@@ -65,7 +88,7 @@ const PdfLoader = ({ pdfUrl }: { pdfUrl: string }) => {
       <div
         ref={containerRef}
         className="overflow-x-hidden center"
-        style={{ maxWidth: "100%" }}
+        style={{ maxWidth: "100%", cursor: "zoom-in" }} // Show zoom-in cursor
       >
         <div className="flex flex-col gap-y-8">
           {pdfPages.map((p, i) => (
@@ -78,26 +101,6 @@ const PdfLoader = ({ pdfUrl }: { pdfUrl: string }) => {
           ))}
         </div>
       </div>
-
-      {/* Zoom Control Buttons */}
-      {/* <div className="fixed bottom-4 left-1/2 transform -translate-x-[250px] z-50">
-        <div className="flex gap-4 bg-black/90 backdrop-blur-md shadow-lg px-6 py-3 rounded-full border border-gray-300">
-          <button
-            onClick={handleZoomOut}
-            className="text-xl center w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 active:scale-95 transition"
-            title="Zoom Out"
-          >
-            −
-          </button>
-          <button
-            onClick={handleZoomIn}
-            className="text-xl w-10 h-10 rounded-full center  bg-gray-200 hover:bg-gray-300 active:scale-95 transition"
-            title="Zoom In"
-          >
-            +
-          </button>
-        </div>
-      </div> */}
     </div>
   );
 };
