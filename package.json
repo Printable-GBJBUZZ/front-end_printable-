@@ -11,6 +11,8 @@
     "dependencies": {
         "@auth/drizzle-adapter": "^1.8.0",
         "@clerk/nextjs": "^6.15.0",
+        "@fortawesome/free-solid-svg-icons": "^6.7.2",
+        "@fortawesome/react-fontawesome": "^0.2.2",
         "@heroicons/react": "^2.2.0",
         "@neondatabase/serverless": "^0.10.4",
         "@react-google-maps/api": "^2.20.7",
@@ -30,6 +32,8 @@
         "next-auth": "^4.24.11",
         "pdf-lib": "^1.17.1",
         "pdfjs-dist": "^2.16.105",
+        "pptxgenjs": "^4.0.1",
+        "pusher-js": "^8.4.0",
         "radix-ui": "^1.2.0",
         "react": "^18.2.0",
         "react-apexcharts": "^1.7.0",
@@ -46,6 +50,7 @@
         "tailwind-merge": "^3.2.0",
         "tailwind-scrollbar": "^4.0.2",
         "uuid": "^11.1.0",
+        "zod": "^4.0.5",
         "zustand": "^5.0.4"
     },
     "devDependencies": {
