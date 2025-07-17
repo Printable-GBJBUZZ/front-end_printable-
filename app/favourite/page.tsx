@@ -1,9 +1,9 @@
-// app/account/page.tsx
 "use client";
 
 import Sidebar from "@/components/UserProfile/sidebar"; 
 import { motion } from "framer-motion";
-import MyOrders from "@/components/UserProfile/my_orders";
+// import MyOrders from "@/components/UserProfile/my_orders";
+import Favorites from "@/components/favourite/favourite";
 
 const mockUser = {
   name: "Jay Vasani",
@@ -22,7 +22,7 @@ export default function Page() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <MyOrders />
+        <Favorites />
       </motion.div>
     </div>
   );

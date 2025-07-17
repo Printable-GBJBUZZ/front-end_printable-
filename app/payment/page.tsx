@@ -3,7 +3,8 @@
 
 import Sidebar from "@/components/UserProfile/sidebar"; 
 import { motion } from "framer-motion";
-import MyOrders from "@/components/UserProfile/my_orders";
+// import MyOrders from "@/components/UserProfile/my_orders";
+import PaymentMethods from "@/components/UserProfile/payment/payment";
 
 const mockUser = {
   name: "Jay Vasani",
@@ -22,7 +23,7 @@ export default function Page() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <MyOrders />
+        <PaymentMethods />
       </motion.div>
     </div>
   );
