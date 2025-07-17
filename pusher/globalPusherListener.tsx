@@ -12,12 +12,16 @@ export default function GlobalPusherListener() {
   useEffect(() => {
     if (!isLoaded || !user?.id || !pusherClient) return;
 
-    const channel = pusherClient.subscribe(`user-${user.id}`);
+    const channel = pusherClient.subscribe(`chat-userid-${user.id}`);
     console.log("Pusher initialized for user:", user.id);
 
     channel?.bind("order-status", (data: any) => {
       toast.success("you order has been accepted!!");
     });
+    channel?.bind("chat", (data: any) => {
+      toast.success("received new message");
+    });
+
 
     return () => {
       console.log("Cleaning up Pusher subscription");
