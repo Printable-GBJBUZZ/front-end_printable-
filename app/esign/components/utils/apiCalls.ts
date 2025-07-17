@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_ROOT_URL}`;
 export const GetFiles = async (fileId: string, userId: string) => {
   try {
     const res = await fetch(

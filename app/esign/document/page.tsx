@@ -11,7 +11,7 @@ import { useSignUrl } from "../useSign";
 import { drawSignatureOnPdf } from "../components/utils/pdfUtils";
 import TimeLine from "../components/timeLine";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_ROOT_URL}`;
 
 const PdfViewer = dynamic(
   () => import("../components/pdfLoader").then((mod) => mod.default),
@@ -64,16 +64,16 @@ export default function SignDocument() {
         toast.success(
           response.msg || "signed and saved document successfully!!"
         );
-        // Refresh file data to update status
+        // Refresh file data to update statusS
         const FileData = await GetFiles(fileId, user?.id as string);
+        console.log(FileData);
         setFileUrl(FileData.fileUrl);
         const found = FileData.info.find(
           (info: any) =>
-            info.ownerId === user?.id && info.signeeSignStatus === "pending"
+            info.signeeEmail === user?.primaryEmailAddress &&
+            info.signeeSignStatus === "pending"
         );
-
         found ? setToEdit(true) : setToEdit(false);
-
         setFile(FileData.info);
       } else {
         toast.error(response.msg || "Failed to save document.");
@@ -98,7 +98,6 @@ export default function SignDocument() {
         setFileUrl(FileData.fileUrl);
         const found = FileData.info.some(
           (info: any) =>
-            info.ownerId === user?.id &&
             info.signeeEmail === user?.primaryEmailAddress?.emailAddress &&
             info.signeeSignStatus === "pending"
         );

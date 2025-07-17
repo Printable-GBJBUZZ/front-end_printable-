@@ -1,23 +1,20 @@
 "use client";
+import { useUser } from "@clerk/nextjs";
+import { Download } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import DocumentView from "../components/documentView";
 import SingerDetailsForm from "../components/signeeForm";
 import SigningTool from "../components/signTool";
-import DocumentView from "../components/documentView";
-import { useUser } from "@clerk/nextjs";
-import { useSignUrl } from "../useSign";
-import { ToastContainer, toast } from "react-toastify";
-import { drawSignatureOnPdf } from "../components/utils/pdfUtils";
-import "react-toastify/dist/ReactToastify.css";
-import { useSearchParams, useRouter } from "next/navigation";
 import {
   SaveSignDocument,
   sendSignRequestEmail,
   UploadDocument,
 } from "../components/utils/apiCalls";
-import { Download } from "lucide-react";
-
-const DOMAIN_BASE_URL =
-  process.env.NEXT_PUBLIC_DOMAIN_URL || "http://localhost:3000";
+import { drawSignatureOnPdf } from "../components/utils/pdfUtils";
+import { useSignUrl } from "../useSign";
 
 function SignDocument() {
   const searchParams = useSearchParams();
@@ -25,7 +22,7 @@ function SignDocument() {
   const file = window
     ? JSON.parse(sessionStorage.getItem("file") as string)
     : null;
-  const [fileName, setFileName] = useState(file.fileName);
+  const [fileName, setFileName] = useState(file?.fileName || null);
   const [documentId, setDocumentId] = useState("");
   useEffect(() => {
     setFileName((searchParams.get("fileName") as string) || file.fileName);
@@ -42,10 +39,9 @@ function SignDocument() {
     router.replace(`?${params.toString()}`); // no page reload
   };
   const { user } = useUser();
-  const { fileId, signers_email, signs, pdfData, updateSign } = useSignUrl();
+  const { signers_email, signs, pdfData, updateSign } = useSignUrl();
 
   const handleDownload = async () => {
-    console.log("clicked");
     if (!pdfData || !signs || !fileName) {
       throw new Error("Missing required data for saving document.");
     }
@@ -59,7 +55,6 @@ function SignDocument() {
   };
 
   const uploadDocument = async () => {
-    console.log(fileName);
     if (!pdfData || !signs || !fileName) {
       throw new Error("Missing required data for saving document.");
     }
@@ -91,7 +86,10 @@ function SignDocument() {
       const response = await UploadDocument(formData);
       const result = await response.json();
       const uploadedFileUrl = result.fileUrl.split("/");
-      const [fileId, fileName] = uploadedFileUrl.pop().split("_");
+      const str = uploadedFileUrl.pop();
+      const index = str.indexOf("_");
+      const fileId = str.slice(0, index);
+      const fileName = str.slice(index + 1);
 
       updateSearchParams(fileId, fileName);
       return { fileId, fileName };
@@ -102,7 +100,6 @@ function SignDocument() {
   };
 
   const saveSignedDocument = async () => {
-    console.log(pdfData);
     if (!pdfData || !signs || !fileName || !documentId) {
       throw new Error("Missing required data for saving document.");
     }
@@ -125,7 +122,7 @@ function SignDocument() {
     }
   };
 
-  const handleSignRequest = async (e) => {
+  const handleSignRequest = async (e: any) => {
     e.preventDefault();
     if (!signers_email || signers_email.length === 0) {
       toast.error("Missing signee for sending request.");
@@ -136,31 +133,45 @@ function SignDocument() {
     try {
       let result;
       if (documentId) {
-        const link = `${DOMAIN_BASE_URL}/esign/document?id=${documentId}`;
+        const link = `${
+          process.env.NEXT_PUBLIC_DOMAIN_ROOT_URL || ""
+        }/esign/document?id=${documentId}`;
         const payload = {
           requestedBy: user?.id,
-          fileIds: [fileId],
+          fileIds: [documentId],
           signers_email: [signers_email[signers_email.length - 1]],
           link,
-          signs,
         };
         await saveSignedDocument();
-        await sendSignRequestEmail(payload);
-        toast.success("Document saved and sign request sent successfully.");
+        const res = await sendSignRequestEmail(payload);
+        const response = await res.json();
+
+        if (response.success) {
+          toast.success("Document saved and sign request sent successfully.");
+        } else {
+          console.log(documentId);
+          toast.error(response.msg);
+        }
       } else {
         result = await uploadDocument();
-        const link = `${DOMAIN_BASE_URL}/esign/document?id=${result.fileId}`;
+        const link = `${
+          process.env.NEXT_PUBLIC_DOMAIN_ROOT_URL || ""
+        }/esign/document?id=${result.fileId}`;
         const payload = {
           requestedBy: user?.id,
           fileIds: [result.fileId],
           signers_email: signers_email,
           link,
-          signs,
         };
-        await sendSignRequestEmail(payload);
-        toast.success("Sign request sent successfully.");
+        const res = await sendSignRequestEmail(payload);
+        const response = await res.json();
+        if (response.success) {
+          toast.success("Sign request sent successfully.");
+        } else {
+          toast.error(response.msg);
+        }
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(`Failed to send sign request: ${err.message}`);
       console.error("Error:", err);
     } finally {
@@ -168,7 +179,7 @@ function SignDocument() {
     }
   };
 
-  const handleSaveSign = async (e) => {
+  const handleSaveSign = async (e: any) => {
     e.preventDefault();
     if (!signs || signs.length === 0) {
       toast.error("No signatures to save.");
@@ -184,7 +195,7 @@ function SignDocument() {
         await uploadDocument();
         toast.success("Document saved successfully.");
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(`Failed to save signatures: ${err.message}`);
       console.error("Error:", err);
     } finally {
@@ -192,14 +203,21 @@ function SignDocument() {
     }
   };
 
-  const renderButton = (label, onClick, color) => {
+  const renderButton = (label: string, onClick: any, color: string) => {
     // Validate color to prevent invalid class names
     const validColors = ["green", "blue", "yellow"];
     const buttonColor = validColors.includes(color) ? color : "gray";
 
     return (
       <button
-        className={`border-1 flex gap-2 text-[18px] rounded-xl cursor-pointer border-[#06044B] p-3 hover:bg-[#06044B] hover:text-${buttonColor}-500`}
+        className={`border-1 flex gap-2 text-[18px] rounded-xl cursor-pointer border-[#06044B] p-3
+      justify-center items-center
+      ${
+        buttonColor === "yellow"
+          ? "hover:text-green-400"
+          : `hover:text-${buttonColor}-500`
+      }
+      hover:bg-[#06044B]`}
         onClick={onClick}
         disabled={loading}
       >
@@ -224,7 +242,7 @@ function SignDocument() {
             <span className="sr-only">Loading...</span>
           </div>
         ) : (
-          <p>{label}</p>
+          <p className="w-full text-center">{label}</p>
         )}
       </button>
     );
@@ -368,7 +386,7 @@ function SignDocument() {
             {(!signers_email || signers_email.length === 0) &&
               signs &&
               signs.length > 0 &&
-              renderButton("Save", handleSaveSign, "yellow")}
+              renderButton("Sign Document", handleSaveSign, "yellow")}
           </div>
         </div>
       </div>

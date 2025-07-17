@@ -25,7 +25,7 @@ interface FolderType {
   files: FileType[];
 }
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_ROOT_URL}/api`;
 
 function formatFileSize(bytes: number): string {
   if (bytes === 0) return "0 Bytes";
@@ -260,7 +260,7 @@ function AllFile() {
           description: `Folder "${folderName}" created successfully`,
         });
       } else {
-        error("Failed to add folder");
+        console.error("Failed to add folder");
         toast({
           title: "Error",
           description: "Failed to create folder",
@@ -268,7 +268,7 @@ function AllFile() {
         });
       }
     } catch (error) {
-      error("Error adding folder:", error);
+      console.error("Error adding folder:", error);
       toast({
         title: "Error",
         description: "Failed to create folder",
@@ -282,12 +282,12 @@ function AllFile() {
   // Upload file
   const uploadFile = async (file: File) => {
     if (!file) {
-      error("No file provided");
+      console.error("No file provided");
       return;
     }
 
     if (!fileSelection) {
-      error("No folder selected");
+      console.error("No folder selected");
       return;
     }
 
@@ -327,7 +327,7 @@ function AllFile() {
         });
       } else {
         const errorText = await response.text();
-        error("Failed to upload file:", errorText);
+        console.error("Failed to upload file:", errorText);
         toast({
           title: "Error",
           description: "Failed to upload file",
@@ -335,7 +335,7 @@ function AllFile() {
         });
       }
     } catch (error) {
-      error("Error uploading file:", error);
+      console.error("Error uploading file:", error);
       toast({
         title: "Error",
         description: "Failed to upload file",
@@ -377,7 +377,7 @@ function AllFile() {
           description: `Folder renamed to "${newName}" successfully`,
         });
       } else {
-        error("Failed to rename folder");
+        console.error("Failed to rename folder");
         toast({
           title: "Error",
           description: "Failed to rename folder",
@@ -385,7 +385,7 @@ function AllFile() {
         });
       }
     } catch (error) {
-      error("Error renaming folder:", error);
+      console.error("Error renaming folder:", error);
       toast({
         title: "Error",
         description: "Failed to rename folder",
@@ -413,7 +413,7 @@ function AllFile() {
           description: `Folder "${folder.folderName}" deleted successfully`,
         });
       } else {
-        error("Failed to delete folder");
+        console.error("Failed to delete folder");
         toast({
           title: "Error",
           description: "Failed to delete folder",
@@ -421,7 +421,7 @@ function AllFile() {
         });
       }
     } catch (error) {
-      error("Error deleting folder:", error);
+      console.error("Error deleting folder:", error);
       toast({
         title: "Error",
         description: "Failed to delete folder",
@@ -453,7 +453,7 @@ function AllFile() {
           description: "File moved successfully",
         });
       } else {
-        error("Failed to move file");
+        console.error("Failed to move file");
         toast({
           title: "Error",
           description: "Failed to move file",
@@ -461,7 +461,7 @@ function AllFile() {
         });
       }
     } catch (error) {
-      error("Error moving file:", error);
+      console.error("Error moving file:", error);
       toast({
         title: "Error",
         description: "Failed to move file",
@@ -494,7 +494,7 @@ function AllFile() {
           description: `File "${fileName}" deleted successfully`,
         });
       } else {
-        error("Failed to delete file");
+        console.error("Failed to delete file");
         toast({
           title: "Error",
           description: "Failed to delete file",
@@ -502,7 +502,7 @@ function AllFile() {
         });
       }
     } catch (error) {
-      error("Error deleting file:", error);
+      console.error("Error deleting file:", error);
       toast({
         title: "Error",
         description: "Failed to delete file",
@@ -777,7 +777,9 @@ function AllFile() {
                       <AnimatePresence>
                         {openFolderMenuIndex === idx && (
                           <motion.div
-                            ref={(el) => (folderMenuRefs.current[idx] = el)}
+                            ref={(el) => {
+                              folderMenuRefs.current[idx] = el;
+                            }}
                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
