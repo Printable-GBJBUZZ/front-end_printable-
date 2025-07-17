@@ -86,6 +86,7 @@ function SingerDetailsForm({ onlyOther }: { onlyOther: boolean }) {
     setAddSignee(false);
     setErrors({});
   };
+
   useEffect(() => {
     const email = user?.primaryEmailAddress?.emailAddress;
     if (!email) return;
@@ -100,7 +101,6 @@ function SingerDetailsForm({ onlyOther }: { onlyOther: boolean }) {
 
   const removeSignee = (index: number) => {
     updateSignerEmail(signees[index].email);
-
     setSignees((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -120,9 +120,7 @@ function SingerDetailsForm({ onlyOther }: { onlyOther: boolean }) {
               JD
             </div>
             <div className="flex-1 w-[30vh] overflow-hidden">
-              <p className="font-medium">
-                John Doe
-              </p>
+              <p className="font-medium">John Doe</p>
               <p className="text-sm text-gray-600">john.doe@example.com</p>
             </div>
             <svg
@@ -142,16 +140,20 @@ function SingerDetailsForm({ onlyOther }: { onlyOther: boolean }) {
 
       <SigneeCard signees={signees} removeSignee={removeSignee} />
 
-      <div className={`p-4 bg-white rounded-lg shadow border border-gray-200 transition-all duration-300 ${addSignee ? 'rounded-b-none' : 'rounded-b-lg'}`}>
+      <div
+        className={`p-4 bg-white rounded-lg shadow border border-gray-200 transition-all duration-[2000ms] ease-in-out ${
+          addSignee ? "rounded-b-none" : "rounded-b-lg"
+        }`}
+      >
         <div className="flex justify-between items-center">
           <h2 className="text-sm font-medium">Add signee information</h2>
           <button
-            className="text-[#06044B] cursor-pointer transition-transform duration-300"
+            className="text-[#06044B] cursor-pointer transition-transform duration-[2000ms] ease-in-out"
             onClick={() => setAddSignee(!addSignee)}
             aria-label="Toggle add signee form"
           >
             <span
-              className={`inline-block transition-transform duration-300 ${
+              className={`inline-block transition-transform duration-[2000ms] ease-in-out ${
                 addSignee ? "rotate-45" : "rotate-0"
               }`}
             >
@@ -162,7 +164,7 @@ function SingerDetailsForm({ onlyOther }: { onlyOther: boolean }) {
       </div>
 
       <div
-        className={`overflow-hidden transition-all duration-300 ${
+        className={`overflow-hidden transition-all duration-[2000ms] ease-in-out ${
           addSignee
             ? "max-h-[500px] opacity-100"
             : "max-h-0 opacity-0 pointer-events-none"
@@ -195,9 +197,7 @@ function SingerDetailsForm({ onlyOther }: { onlyOther: boolean }) {
                   className="w-full h-[30px] px-3 py-2 text-sm bg-gray-200 rounded-md outline-none"
                 />
                 {errors.firstName && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.firstName}
-                  </p>
+                  <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>
                 )}
               </div>
 
@@ -218,24 +218,23 @@ function SingerDetailsForm({ onlyOther }: { onlyOther: boolean }) {
 
             <div className="flex justify-end mt-2">
               <button
-                className="flex items-center gap-1 px-4 py-1.5 text-sm border border-[#06044B] text-[#06044B] rounded-full transition-colors duration-200 hover:bg-[#06044B] hover:text-green-300"
+                className="flex items-center gap-1 px-4 py-1.5 text-sm border border-[#06044B] text-[#06044B] rounded-full transition-colors duration-[2000ms] ease-in-out hover:bg-[#06044B] hover:text-green-300"
                 onClick={handleAddSignee}
               >
                 <Plus size={14} /> Add
               </button>
             </div>
           </div>
-
         </div>
       </div>
       <div className="flex justify-end mt-4">
         <button
-                className="w-full flex items-center justify-center gap-1 px-4 py-1.5 text-sm border border-[#06044B] text-[#06044B] rounded-full transition-colors duration-200 hover:bg-[#06044B] hover:text-green-300"
-                // Add your save handler here, e.g., onClick={handleSaveSignee}
-              >
-                Save
+          className="w-full flex items-center justify-center gap-1 px-4 py-1.5 text-sm border border-[#06044B] text-[#06044B] rounded-full transition-colors duration-[2000ms] ease-in-out hover:bg-[#06044B] hover:text-green-300"
+          // Add your save handler here, e.g., onClick={handleSaveSignee}
+        >
+          Save
         </button>
-        </div>
+      </div>
     </div>
   );
 }
