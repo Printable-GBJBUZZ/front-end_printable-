@@ -1,5 +1,8 @@
 "use client";
-import { createContext, useContext, useReducer, ReactNode } from "react";
+
+import type React from "react";
+
+import { createContext, useContext, useReducer, type ReactNode } from "react";
 
 export interface DocumentItem {
   fileName: string;
@@ -48,7 +51,7 @@ type Action =
 const initialOrder: Order = {
   userId: "1",
   merchantId: "1",
-  status: "declined",
+  status: "pending",
   totalAmount: 320,
   paymentMethod: "Credit Card",
   fulfillmentType: "takeaway",
@@ -64,16 +67,13 @@ function orderReducer(state: Order, action: Action): Order {
   switch (action.type) {
     case "SET_ORDER":
       return action.payload;
-
     case "ADD_DOCUMENT":
       return { ...state, documents: [...state.documents, action.payload] };
-
     case "REMOVE_DOCUMENT":
       return {
         ...state,
         documents: state.documents.filter((_, i) => i !== action.index),
       };
-
     case "UPDATE_DOCUMENT":
       return {
         ...state,
@@ -81,10 +81,8 @@ function orderReducer(state: Order, action: Action): Order {
           i === action.index ? action.payload : doc,
         ),
       };
-
     case "UPDATE_FIELD":
       return { ...state, [action.field]: action.payload } as Order;
-
     default:
       return state;
   }
