@@ -9,12 +9,14 @@ import {
 } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { NavBar } from "@/components/nav-bar";
+// import { NavBar } from "@/components/nav-bar";
 import { FileProvider } from "./pdfcompress/FileContext";
 import { OrderProvider } from "@/context/orderContext";
 import GlobalPusherListener from "@/pusher/globalPusherListener";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+// import { usePathname } from 'next/navigation'
+import ClientLayoutWrapper from "./ClientLayoutWrapper";
 
 
 const geistSans = Geist({
@@ -37,15 +39,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <ClerkProvider>
+    <ClientLayoutWrapper>
+
+
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased `}
         >
 
-          <NavBar />
-
+       
             <ToastContainer/>
 
         <GlobalPusherListener/>
@@ -55,6 +60,7 @@ export default function RootLayout({
           </FileProvider>
         </body>
       </html>
+    </ClientLayoutWrapper>
     </ClerkProvider>
   );
 }
