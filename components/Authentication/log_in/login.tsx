@@ -116,42 +116,45 @@ export default function LoginPage() {
           className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4ade80]"
         />
         
+{/* Password Input (only if needed) */}
 {showPasswordInput && (
-  <div className="mt-4 relative transition-all duration-300">
-    <input
-      type={showPassword ? "text" : "password"}
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      placeholder="Password"
-      className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md"
-    />
-    <button
-      type="button"
-      onClick={() => setShowPassword(!showPassword)}
-      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-    >
-      {showPassword ? <FaEyeSlash /> : <FaEye />}
-    </button>
+  <div className="mt-4 transition-all duration-300">
+    <div className="relative">
+      <input
+        type={showPassword ? "text" : "password"}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+        className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md"
+      />
+      <button
+        type="button"
+        onClick={() => setShowPassword(!showPassword)}
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+      >
+        {showPassword ? <FaEyeSlash /> : <FaEye />}
+      </button>
+    </div>
   </div>
 )}
 
 
-        <button
+{/* Continue Button — Always Visible */}
+<button
   onClick={() => {
     if (showPasswordInput) {
       if (password.length >= 6) {
-        // Proceed to login logic
         alert('Logging in...');
       }
     } else {
-      handleContinue(); // Will show OTP or password input
+      handleContinue(); // Shows OTP or password input
     }
   }}
   disabled={
     (showPasswordInput && password.length < 6) ||
     (!showPasswordInput && !isValid)
   }
-  className={`w-full py-2 mt-4 rounded-lg font-medium text-sm mb-4 transition-all duration-300 ${
+  className={`w-full py-2 mt-4 rounded-lg font-medium text-sm transition-all duration-300 ${
     (showPasswordInput && password.length >= 6) || (!showPasswordInput && isValid)
       ? 'bg-[#06044B] text-white hover:bg-[#38366F]'
       : 'bg-gray-300 text-white cursor-not-allowed'
@@ -159,6 +162,15 @@ export default function LoginPage() {
 >
   Continue
 </button>
+
+{/* Forgot password — Show only when password is visible */}
+{showPasswordInput && (
+  <p className="text-sm text-center text-blue-600 mt-2 cursor-pointer hover:underline">
+    Forgot password?
+  </p>
+)}
+
+
 
         
 
