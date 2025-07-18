@@ -18,7 +18,6 @@ import "react-toastify/dist/ReactToastify.css";
 // import { usePathname } from 'next/navigation'
 import ClientLayoutWrapper from "./ClientLayoutWrapper";
 
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -39,28 +38,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <ClerkProvider>
-    <ClientLayoutWrapper>
-
-
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-
-       
-            <ToastContainer/>
-
-        <GlobalPusherListener/>
+          <ToastContainer />
+          <GlobalPusherListener />
           <FileProvider>
-            <OrderProvider>{children}</OrderProvider>{" "}
-
+            <OrderProvider>
+              <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
+            </OrderProvider>
           </FileProvider>
         </body>
       </html>
-    </ClientLayoutWrapper>
     </ClerkProvider>
   );
 }

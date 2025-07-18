@@ -1,39 +1,56 @@
-"use client";
+"use client"
 
-import { useState, useRef, useEffect } from "react";
-import NewUploadBox from "@/components/NewUploadBox/page";
-import Categories from "@/components/NewHomePage/Categories";
-import Activity from "@/components/NewHomePage/Activity";
-import HelpSection from "@/components/NewHomePage/HelpSection";
-import Footer from "@/components/Footer/page";
-import PageCard from "@/components/NewHomePage/Shopcard";
-import FileUploadPopUp from "@/components/FileUpload-PopUp/page";
-import PrintOptionsPage from "./print-and-deliver/pdf/page";
+import { useState, useRef, useEffect } from "react"
+import NewUploadBox from "@/components/NewUploadBox/page"
+import Categories from "@/components/NewHomePage/Categories"
+import Activity from "@/components/NewHomePage/Activity"
+import HelpSection from "@/components/NewHomePage/HelpSection"
+import Footer from "@/components/Footer/page"
+import PageCard from "@/components/NewHomePage/Shopcard"
+import FileUploadPopUp from "@/components/FileUpload-PopUp/page"
+import { useRouter } from "next/navigation"
+import UseStorage from "@/hooks/useStorage"
+import { useOrder } from "@/context/orderContext"
 
 export default function Page() {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [showUploadPopup, setShowUploadPopup] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const dropdownMenuRef = useRef<HTMLDivElement | null>(null);
-  const [file, setFile] = useState<File | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [showUploadPopup, setShowUploadPopup] = useState(false)
+  const [uploadingFile, setUploadingFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const dropdownMenuRef = useRef<HTMLDivElement | null>(null)
+
+  const { uploadFile } = UseStorage()
+  const { dispatch } = useOrder()
+  const router = useRouter()
 
   const handleFromDeviceClick = () => {
-    fileInputRef.current?.click();
-    setDropdownOpen(false);
-  };
+    fileInputRef.current?.click()
+    setDropdownOpen(false)
+  }
 
   const handleFromDriveClick = () => {
-    alert("Google Drive integration goes here");
-    setDropdownOpen(false);
-  };
+    alert("Google Drive integration goes here")
+    setDropdownOpen(false)
+  }
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setShowUploadPopup(true); // Show the popup when file is selected
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0]
+    if (!selectedFile) return
+
+    setUploadingFile(selectedFile)
+    setShowUploadPopup(true)
+
+    const uploadedDoc = await uploadFile(selectedFile)
+
+    if (uploadedDoc) {
+      dispatch({ type: "ADD_DOCUMENT", payload: uploadedDoc })
     }
-  };
+
+    // Optional delay to allow animation
+    setTimeout(() => {
+      router.push("/print-and-deliver/print")
+    }, 2500)
+  }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -41,17 +58,16 @@ export default function Page() {
         dropdownMenuRef.current &&
         !dropdownMenuRef.current.contains(event.target as Node)
       ) {
-        setDropdownOpen(false);
+        setDropdownOpen(false)
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   return (
     <div className="overflow-x-hidden">
-      {/* Page layout */}
       <div className="flex flex-col items-center bg-gray-100 min-h-screen lg:px-[200px] md:px-[100px] sm:px-[100px] px-4">
         <div className="flex lg:flex-nowrap flex-wrap w-full min-h-[400px] items-center gap-4 lg:py-16 md:py-16 sm:py-16 py-4">
           <div className="h-auto lg:w-1/2 md:w-1/2 w-full">
@@ -62,7 +78,7 @@ export default function Page() {
               fileInputRef={fileInputRef}
               handleFromDeviceClick={handleFromDeviceClick}
               handleFromDriveClick={handleFromDriveClick}
-              handleFileChange={handleFileChange} // Handle file selection
+              handleFileChange={handleFileChange}
             />
           </div>
         </div>
@@ -74,14 +90,9 @@ export default function Page() {
       <HelpSection />
       <Footer />
 
-      {/* File Upload Popup + Print Page */}
-      {showUploadPopup && file && (
-        <>
-          <FileUploadPopUp onClose={() => setShowUploadPopup(false)} />
-          {/* Passing the selected file to the PrintOptionsPage */}
-          <PrintOptionsPage file={file} />
-        </>
+      {showUploadPopup && uploadingFile && (
+        <FileUploadPopUp onClose={() => setShowUploadPopup(false)} />
       )}
     </div>
-  );
+  )
 }
