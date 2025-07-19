@@ -88,7 +88,7 @@ export function NavBar() {
                 E - Sign
               </Link>
               <Link
-                href={`/print-and-deliver/${User.user?.id}`}
+                href={`/print-and-deliver/print`}
                 className="px-1 py-2 text-sm font-medium hover:text-[#61e987]"
               >
                 Print & Deliver

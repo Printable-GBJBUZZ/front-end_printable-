@@ -172,7 +172,7 @@ export default function FooterSection() {
             <div className="flex gap-2">
               <div className="h-[50px] w-[50px]">
                 <Image
-                  src="/Printable Logo.png"
+                  src="/printable-Logo.png"
                   alt="Printable Logo"
                   height={100}
                   width={100}
