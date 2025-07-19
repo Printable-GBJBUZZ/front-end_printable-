@@ -75,7 +75,7 @@ const tools = [
         title: "Organize",
         items: [
           { icon: <FaObjectGroup size={16} />, label: "Merge PDF", link: "/tools/merge-pdf" },
-          { icon: <FaCodeBranch  size={16}/>, label: "Split PDF", link: "/tools/split-pdf" },
+          { icon: <FaCodeBranch  size={16}/>, label: "Split PDF", link: "/Organize-Split-PDF/Pdf-Upload" },
           { icon: <FaRedo  size={16}/>, label: "Rotate PDF", link: "/tools/rotate-pdf" },
           { icon: <FaTrash size={16} />, label: "Delete PDF", link: "/tools/delete-pdf" },
           { icon: <FaFileExport size={16}/>, label: "Extract PDF", link: "/tools/extract-pdf" },
@@ -100,11 +100,11 @@ const tools = [
     sections: [
       {
         title: "Sign",
-        items: [{ icon: <FaSignature size={16}/>, label: "Sign PDF", link: "/tools/sign-pdf" }],
+        items: [{ icon: <FaSignature size={16}/>, label: "Sign PDF", link: "/esign" }],
       },
       {
         title: "Compress",
-        items: [{ icon: <FaCompress size={16}/>, label: "Compress PDF", link: "/tools/compress-pdf" }],
+        items: [{ icon: <FaCompress size={16}/>, label: "Compress PDF", link: "/pdfcompress" }],
       },
       {
         title: "Scan",

@@ -13,7 +13,7 @@ import {
   sendSignRequestEmail,
   UploadDocument,
 } from "../components/utils/apiCalls";
-import { Download } from "lucide-react";
+
 const DOMAIN_BASE_URL = process.env.FRONTEND_PRINTABLE_URL || "http://localhost:3000";
 import { drawSignatureOnPdf } from "../components/utils/pdfUtils";
 import { useSignUrl } from "../useSign";
