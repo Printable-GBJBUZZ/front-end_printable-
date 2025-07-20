@@ -22,7 +22,7 @@ export default function Home() {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(intervalRef.current!);
-          router.push("/Organize-Split-PDF/separate-pdf-dpe");
+          router.push("/Organize-Split-PDF/Separate-pdf-DPE");
           return 100;
         }
         return prev + 5;

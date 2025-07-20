@@ -552,7 +552,7 @@ export default function Component() {
                           );
                         } else if (order.documents[selectedDocumentIndex]) {
                           updateDocument(selectedDocumentIndex, {
-                            paperSize: value,
+                            paperSize: value as DocumentItem["paperSize"],
                           });
                         }
                       }}

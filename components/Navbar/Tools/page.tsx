@@ -47,7 +47,7 @@ const tools = [
       {
         title: "AI presentation maker",
         items: [
-          { icon: <TbDeviceTv size={16} />, label: "Generate PPT", link: "/tools/generate-ppt" },
+          { icon: <TbDeviceTv size={16} />, label: "Generate PPT", link: "/presentation-maker" },
           { icon: <FaEdit  size={16}/>, label: "Edit PPT", link: "/tools/edit-ppt" },
         ],
       },
@@ -74,12 +74,12 @@ const tools = [
       {
         title: "Organize",
         items: [
-          { icon: <FaObjectGroup size={16} />, label: "Merge PDF", link: "/tools/merge-pdf" },
-          { icon: <FaCodeBranch  size={16}/>, label: "Split PDF", link: "/tools/split-pdf" },
+          { icon: <FaObjectGroup size={16} />, label: "Merge PDF", link: "/Organize" },
+          { icon: <FaCodeBranch  size={16}/>, label: "Split PDF", link: "/Organize-Split-PDF/Pdf-Upload" },
           { icon: <FaRedo  size={16}/>, label: "Rotate PDF", link: "/tools/rotate-pdf" },
           { icon: <FaTrash size={16} />, label: "Delete PDF", link: "/tools/delete-pdf" },
           { icon: <FaFileExport size={16}/>, label: "Extract PDF", link: "/tools/extract-pdf" },
-          { icon: <FaTh  size={16}/>, label: "Organize PDF", link: "/tools/organize-pdf" },
+          { icon: <FaTh  size={16}/>, label: "Organize PDF", link: "/tools/organizePdf" },
         ],
       },
     ],
@@ -91,7 +91,7 @@ const tools = [
         items: [
           { icon: <FaUnlock size={16} />, label: "Unlock PDF", link: "/tools/unlock-pdf" },
           { icon: <FaLock size={16} />, label: "Lock PDF", link: "/tools/lock-pdf" },
-          { icon: <FaFileDownload  size={16}/>, label: "Flat PDF", link: "/tools/flat-pdf" },
+          { icon: <FaFileDownload  size={16}/>, label: "Flat PDF", link: "/drop-file" },
         ],
       },
     ],
@@ -100,11 +100,11 @@ const tools = [
     sections: [
       {
         title: "Sign",
-        items: [{ icon: <FaSignature size={16}/>, label: "Sign PDF", link: "/tools/sign-pdf" }],
+        items: [{ icon: <FaSignature size={16}/>, label: "Sign PDF", link: "/esign" }],
       },
       {
         title: "Compress",
-        items: [{ icon: <FaCompress size={16}/>, label: "Compress PDF", link: "/tools/compress-pdf" }],
+        items: [{ icon: <FaCompress size={16}/>, label: "Compress PDF", link: "/pdfcompress" }],
       },
       {
         title: "Scan",

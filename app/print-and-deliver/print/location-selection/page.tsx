@@ -208,9 +208,9 @@ export default function LocationSelectionPage() {
   const userMarkerRef = useRef<google.maps.Marker | null>(null);
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
-  const filteredMerchants = nearbyMerchants.filter((merchant) =>
-    merchant.shopName.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+ const filteredMerchants = nearbyMerchants.filter((merchant) =>
+  merchant.shopName?.toLowerCase().includes(searchQuery.toLowerCase())
+);
 
   const getUserLocation = () => {
     setLocationPermission("loading");
