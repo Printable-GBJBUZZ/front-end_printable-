@@ -1,335 +1,362 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { ArrowLeft, ChevronDown, ChevronUp, CreditCard, Smartphone, Building2, Banknote } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-
-// Demo data - will come from backend
-const fileData = [
-  {
-    id: 1,
-    name: "File 1 - Jay Vasani UX InJa Pro",
-    pages: "1 page, Black & White, Portrait",
-    copies: "15 Copies",
-    thumbnail: "/placeholder.svg?height=60&width=60",
-  },
-  {
-    id: 2,
-    name: "File 1 - Jay Vasani UX InJa Pro",
-    pages: "1 page, Black & White, Portrait",
-    copies: "15 Copies",
-    thumbnail: "/placeholder.svg?height=60&width=60",
-  },
-  {
-    id: 3,
-    name: "File 1 - Jay Vasani UX InJa Pro",
-    pages: "1 page, Black & White, Portrait",
-    copies: "15 Copies",
-    thumbnail: "/placeholder.svg?height=60&width=60",
-  },
-]
-
-const addressData = {
-  name: "Jay",
-  address: "184 Surthana Jakat Naka, Nana Varachha Surat, Gujarat, India",
-}
-
-const orderSummary = {
-  subtotal: 750,
-  deliveryCharges: 20,
-  taxRate: 8,
-  tax: 18.0,
-  grandTotal: 768.0,
-}
-
-const shopData = {
-  name: "Print Master Shop",
-  description: "Total 3 Items (25 Pages)",
-}
+import { useState } from 'react';
+import { IoIosArrowDown, IoIosArrowUp, IoMdEye, IoMdEyeOff  } from 'react-icons/io';
+import {FaCreditCard, FaUniversity} from 'react-icons/fa';
+import Image from 'next/image';
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function PaymentPage() {
-  const [selectedPayment, setSelectedPayment] = useState("")
-  const [expandedSection, setExpandedSection] = useState("")
-  const [selectedUpiOption, setSelectedUpiOption] = useState("")
-  const [selectedBank, setSelectedBank] = useState("")
+  const [selectedMethod, setSelectedMethod] = useState('wallet');
+  const [promoCode, setPromoCode] = useState('');
+  const [discount, setDiscount] = useState(15.5);
+  const [showUPIOptions, setShowUPIOptions] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState("");
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [cardNumber, setCardNumber] = useState('');
+const [expiry, setExpiry] = useState('');
+const [cvv, setCvv] = useState('');
+const [cardNick, setCardNick] = useState('');
+const [showCVV, setShowCVV] = useState(false);
+const [accountNumber, setAccountNumber] = useState('');
+const [confirmAccountNumber, setConfirmAccountNumber] = useState('');
+const [ifsc, setIfsc] = useState('');
+const [accountHolder, setAccountHolder] = useState('');
 
-  const handleBack = () => {
-    // Navigate to previous route
-    window.history.back()
-  }
 
-  const toggleSection = (section: string) => {
-    setExpandedSection(expandedSection === section ? "" : section)
-    setSelectedPayment(section)
-  }
+  const handlePromoApply = () => {
+    // Logic to apply promo
+  };
 
-  const upiOptions = [
-    { id: "gpay", name: "Google Pay", icon: "/placeholder.svg?height=24&width=24" },
-    { id: "paytm", name: "Paytm", icon: "/placeholder.svg?height=24&width=24" },
-    { id: "phonepe", name: "PhonePe", icon: "/placeholder.svg?height=24&width=24" },
-    { id: "upi-id", name: "UPI ID", icon: "/placeholder.svg?height=24&width=24" },
-  ]
+  const addressData = {
+    name: "Jay",
+    address: "184 Surthana Jakat Naka, Nana Varachha Surat, Gujarat, India",
+  };
 
+  const orderSummary = {
+    subtotal: 750,
+    deliveryCharges: 20,
+    taxRate: 8,
+    tax: 18.0,
+    grandTotal: 768.0,
+  };
+
+  const shopData = {
+    name: "Print Master Shop",
+    description: "Total 3 Items (25 Pages)",
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <div
-            onClick={handleBack}
-            className="flex items-center gap-2 text-gray-900 hover:text-lime-500 transition-colors group mb-4 cursor-pointer w-fit"
-          >
-            <ArrowLeft className="w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:-translate-x-1 transition-all duration-200" />
-            <h1 className="text-2xl font-bold group-hover:translate-x-1 transition-transform duration-200">
-              Select Payment Method
-            </h1>
-          </div>
-        </div>
+    <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
+      <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1">
+        {/* Left Section */}
+        <div className="col-span-2 space-y-6">
+          <h2 className="text-xl font-semibold">Select Payment Method</h2>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Payment Methods - Left Side */}
-          <div className="lg:col-span-2 space-y-4">
+          {/* Payment Method Box */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm space-y-4">
+            <label
+  htmlFor="wallet"
+  className={`border rounded-xl p-4 cursor-pointer flex items-center justify-between transition-colors duration-200 ${
+    selectedMethod === 'wallet' ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-white'
+  }`}
+>
+  <div>
+    <p className="font-medium">Use Printable Wallet</p>
+    <p className="text-sm text-gray-600">Balance (₹1000.00)</p>
+  </div>
+  <input
+    type="radio"
+    id="wallet"
+    name="paymentMethod"
+    value="wallet"
+    checked={selectedMethod === 'wallet'}
+    onChange={() => setSelectedMethod('wallet')}
+    className="accent-green-600 w-4 h-4"
+  />
+</label>
+
+
             {/* UPI */}
-            <Card className="overflow-hidden">
+            <div className="border border-gray-200 rounded-xl p-4 cursor-pointer">
               <div
-                className={`p-4 cursor-pointer transition-colors hover:bg-lime-50 ${
-                  selectedPayment === "upi" ? "bg-lime-50 border-lime-500" : ""
-                }`}
-                onClick={() => toggleSection("upi")}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Smartphone className="w-5 h-5 text-orange-500" />
-                    <span className="font-medium">UPI</span>
-                  </div>
-                  {expandedSection === "upi" ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                </div>
-              </div>
+  onClick={() => setExpanded(expanded === 'upi' ? null : 'upi')}
+  className="flex items-center justify-between py-3 cursor-pointer border-b"
+>
+  <div className="flex items-center gap-3 font-medium text-black">
+    <Image src="/upi.png" alt="UPI" width={24} height={24} />
+    UPI
+  </div>
+  <IoIosArrowDown
+    className={`transition-transform duration-300 ${expanded === 'upi' ? 'rotate-180' : ''}`}
+  />
+</div>
 
-              {expandedSection === "upi" && (
-                <CardContent className="pt-0 pb-4">
-                  <RadioGroup value={selectedUpiOption} onValueChange={setSelectedUpiOption}>
-                    {upiOptions.map((option) => (
-                      <div key={option.id} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50">
-                        <RadioGroupItem value={option.id} id={option.id} />
-                        <img src={option.icon || "/placeholder.svg"} alt={option.name} className="w-6 h-6" />
-                        <Label htmlFor={option.id} className="flex-1 cursor-pointer">
-                          {option.name}
-                        </Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
+{expanded === 'upi' && (
+  <div className="pl-8 pt-4 space-y-3 text-black">
+    {['Google Pay', 'Phone Pay', 'Pay via UPI'].map((option, i) => (
+      <label key={i} className="flex items-center gap-3 text-sm">
+        <input type="radio" name="upi" />
+        {option}
+      </label>
+    ))}
+  </div>
+)}
 
-                  {selectedUpiOption === "upi-id" && (
-                    <div className="mt-4">
-                      <Label htmlFor="upi-id-input">Enter UPI ID</Label>
-                      <Input id="upi-id-input" placeholder="example@upi" className="mt-2" />
-                    </div>
-                  )}
-                </CardContent>
-              )}
-            </Card>
-
-            {/* Credit/Debit Card */}
-            <Card className="overflow-hidden">
-              <div
-                className={`p-4 cursor-pointer transition-colors hover:bg-lime-50 ${
-                  selectedPayment === "card" ? "bg-lime-50 border-lime-500" : ""
-                }`}
-                onClick={() => toggleSection("card")}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <CreditCard className="w-5 h-5 text-blue-500" />
-                    <span className="font-medium">CREDIT/DEBIT CARD</span>
-                  </div>
-                  {expandedSection === "card" ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                </div>
-              </div>
-
-              {expandedSection === "card" && (
-                <CardContent className="pt-0 pb-4 space-y-4">
-                  <div>
-                    <Label htmlFor="card-number">Card Number</Label>
-                    <Input id="card-number" placeholder="1234 5678 9012 3456" className="mt-2" />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="card-name">Cardholder Name</Label>
-                    <Input id="card-name" placeholder="John Doe" className="mt-2" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="expiry">Expiry Date</Label>
-                      <Input id="expiry" placeholder="MM/YY" className="mt-2" />
-                    </div>
-                    <div>
-                      <Label htmlFor="cvv">CVV</Label>
-                      <Input id="cvv" placeholder="123" className="mt-2" />
-                    </div>
-                  </div>
-                </CardContent>
-              )}
-            </Card>
-
-            {/* Net Banking */}
-            <Card className="overflow-hidden">
-              <div
-                className={`p-4 cursor-pointer transition-colors hover:bg-lime-50 ${
-                  selectedPayment === "netbanking" ? "bg-lime-50 border-lime-500" : ""
-                }`}
-                onClick={() => toggleSection("netbanking")}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Building2 className="w-5 h-5 text-green-500" />
-                    <span className="font-medium">NET BANKING</span>
-                  </div>
-                  {expandedSection === "netbanking" ? (
-                    <ChevronUp className="w-5 h-5" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5" />
-                  )}
-                </div>
-              </div>
-
-              {expandedSection === "netbanking" && (
-                <CardContent className="pt-0 pb-4 space-y-4">
-                  <div>
-                    <Label htmlFor="account-number">Account Number</Label>
-                    <Input id="account-number" placeholder="Enter your account number" className="mt-2" />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="re-account-number">Re-enter Account Number</Label>
-                    <Input id="re-account-number" placeholder="Re-enter your account number" className="mt-2" />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="ifsc-code">IFSC Code</Label>
-                    <Input id="ifsc-code" placeholder="Enter IFSC code" className="mt-2" />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="account-holder">Account Holder Name</Label>
-                    <Input id="account-holder" placeholder="Enter account holder name" className="mt-2" />
-                  </div>
-                </CardContent>
-              )}
-            </Card>
-
-            {/* Cash on Delivery */}
-            <Card className="overflow-hidden">
-              <div
-                className={`p-4 cursor-pointer transition-colors hover:bg-lime-50 ${
-                  selectedPayment === "cod" ? "bg-lime-50 border-lime-500" : ""
-                }`}
-                onClick={() => setSelectedPayment("cod")}
-              >
-                <div className="flex items-center gap-3">
-                  <Banknote className="w-5 h-5 text-green-600" />
-                  <span className="font-medium">Cash on Delivery</span>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* Right Side - Files and Order Summary */}
-          <div className="space-y-6">
-            {/* Files Section */}
-            <Card>
-              <CardContent className="p-4">
-                <h3 className="font-semibold mb-4">Files</h3>
-                <div className="space-y-3">
-                  {fileData.map((file) => (
-                    <div key={file.id} className="flex gap-3 p-3 bg-gray-50 rounded-lg">
-                      <img
-                        src={file.thumbnail || "/placeholder.svg"}
-                        alt="File thumbnail"
-                        className="w-12 h-12 rounded object-cover"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">{file.name}</p>
-                        <p className="text-xs text-gray-600">{file.pages}</p>
-                        <p className="text-xs text-gray-600">{file.copies}</p>
-                      </div>
-                    </div>
+              {showUPIOptions && (
+                <div className="pl-8 pt-4 space-y-3 text-black">
+                  {[{ label: 'Google Pay', icon: '/Google Pay.png' }, { label: 'Phone Pay', icon: '/phonepe.png' }, { label: 'Pay via UPI', icon: '/upi.png' }].map((option, i) => (
+                    <label key={i} className="flex items-center gap-3 text-sm">
+                      <input type="radio" name="upi" />
+                      <Image src={option.icon} alt={option.label} width={24} height={24} />
+                      {option.label}
+                    </label>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </div>
 
-            {/* Order Summary */}
-            <Card>
-              <CardContent className="p-4">
-                <h3 className="font-semibold mb-4">Order Summary</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>Subtotal</span>
-                    <span>₹ {orderSummary.subtotal}</span>
+            {/* CARD */}
+            <div className="border border-gray-200 rounded-xl p-4 cursor-pointer">
+              <div
+  onClick={() => setExpanded(expanded === 'card' ? null : 'card')}
+  className="flex items-center justify-between py-3 border-t border-b cursor-pointer"
+>
+  <div className="flex items-center gap-3 text-gray-700 font-medium">
+    <FaCreditCard />
+    CREDIT/DEBIT CARD
+  </div>
+  <IoIosArrowDown
+    className={`transition-transform duration-300 ${expanded === 'card' ? 'rotate-180' : ''}`}
+  />
+</div>
+
+{expanded === 'card' && (
+  <div className="space-y-4 mt-4">
+    <input
+              type="text"
+              placeholder="enter card number"
+              className="w-full border rounded-md px-3 py-2 text-sm text-black"
+              value={cardNumber}
+              onChange={(e) => setCardNumber(e.target.value)}
+            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Expiry date (mm/yy)"
+                className="w-full border rounded-md px-3 py-2 text-sm text-black"
+                value={expiry}
+                onChange={(e) => setExpiry(e.target.value)}
+              />
+              <div className="flex items-center border rounded-md px-3 py-2 w-full">
+                <input
+                  type={showCVV ? "text" : "password"}
+                  placeholder="CVV"
+                  className="flex-1 outline-none text-sm text-black bg-transparent"
+                  value={cvv}
+                  onChange={(e) => setCvv(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCVV((prev) => !prev)}
+                  className="ml-2 text-gray-600 focus:outline-none"
+                >
+                  {showCVV ? <IoMdEyeOff /> : <IoMdEye />}
+                </button>
+              </div>
+            </div>
+            <input
+              type="text"
+              placeholder="Nick name for card (Optional)"
+              className="w-full border rounded-md px-3 py-2 text-sm text-black"
+              value={cardNick}
+              onChange={(e) => setCardNick(e.target.value)}
+            />
+  </div>
+)}
+
+            </div>
+
+            {/* NET BANKING */}
+            <div className="border border-gray-200 rounded-xl p-4 cursor-pointer">
+              <div
+  onClick={() => setExpanded(expanded === 'bank' ? null : 'bank')}
+  className="flex items-center justify-between py-3 border-t cursor-pointer"
+>
+  <div className="flex items-center gap-3 text-gray-700 font-medium">
+    <FaUniversity />
+    NET BANKING
+  </div>
+  <IoIosArrowDown
+    className={`transition-transform duration-300 ${expanded === 'bank' ? 'rotate-180' : ''}`}
+  />
+</div>
+
+{expanded === 'bank' && (
+  <div className="space-y-4 mt-4">
+    <input
+          type="text"
+          placeholder="enter account number"
+          className="w-full border rounded-md px-3 py-2 text-sm text-black"
+          value={accountNumber}
+          onChange={(e) => setAccountNumber(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="re – enter account number"
+          className="w-full border rounded-md px-3 py-2 text-sm text-black"
+          value={confirmAccountNumber}
+          onChange={(e) => setConfirmAccountNumber(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="enter IFSC code"
+          className="w-full border rounded-md px-3 py-2 text-sm text-black"
+          value={ifsc}
+          onChange={(e) => setIfsc(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="enter account holder name"
+          className="w-full border rounded-md px-3 py-2 text-sm text-black"
+          value={accountHolder}
+          onChange={(e) => setAccountHolder(e.target.value)}
+        />
+  </div>
+)}
+
+            </div>
+
+            <p className="text-center text-green-600 text-sm mt-4">🔒 Secure Payment</p>
+          </div>
+
+          {/* Promo Code Section */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm space-y-4">
+            <h3 className="font-semibold">Promo Code</h3>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+                placeholder="ENTER PROMO CODE"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm"
+              />
+              <button
+                onClick={handlePromoApply}
+                className="px-6 py-2 bg-black text-white rounded-lg text-sm"
+              >
+                Apply
+              </button>
+            </div>
+
+            {/* Promo Options */}
+            <div className="space-y-2">
+              {[{ code: 'FIRST10', desc: '10% off on first order', discount: '10% OFF' }, { code: 'SAVE5', desc: '₹5 off on orders above ₹25', discount: '₹5 OFF' }, { code: 'STUDENT20', desc: '20% off for students', discount: '20% OFF' }].map((promo, i) => (
+                <div key={i} className="border border-green-500 rounded-lg p-3 text-sm flex justify-between">
+                  <div>
+                    <p className="font-medium">{promo.code}</p>
+                    <p className="text-gray-600">{promo.desc}</p>
                   </div>
-                  <div className="flex justify-between">
-                    <span>Delivery charges</span>
-                    <span>₹ {orderSummary.deliveryCharges}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Tax ({orderSummary.taxRate}%)</span>
-                    <span>₹ {orderSummary.tax}</span>
-                  </div>
-                  <hr className="my-2" />
-                  <div className="flex justify-between font-semibold">
-                    <span>Grand total</span>
-                    <span>₹ {orderSummary.grandTotal}</span>
-                  </div>
+                  <span className="text-green-600 font-semibold">{promo.discount}</span>
                 </div>
-              </CardContent>
-            </Card>
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div className="mt-8">
-          <Card className="bg-green-50 border-green-200">
-            <CardContent className="p-4">
-              <div className="flex items-start gap-4">
-                <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                <div className="flex-1">
-                  <p className="font-medium text-green-800">Delivering to Home</p>
-                  <p className="text-sm text-green-700">
-                    {addressData.name}, {addressData.address}
-                  </p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-center">
-                    <img
-                      src="/placeholder.svg?height=40&width=40"
-                      alt="Print Master Shop"
-                      className="w-10 h-10 mx-auto mb-1"
-                    />
-                    <p className="font-medium text-sm">{shopData.name}</p>
-                    <p className="text-xs text-gray-600">{shopData.description}</p>
-                  </div>
-                  <Button className="bg-blue-900 hover:bg-blue-800 text-white px-8" disabled={!selectedPayment}>
-                    Pay ₹ {orderSummary.grandTotal}
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Right Section - Order Summary + Bill Summary */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm space-y-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="font-semibold">Order Summary</h3>
+            <div className="text-sm text-green-600 space-x-2">
+              <button>Edit</button>
+              <span>•</span>
+              <button>Remove</button>
+            </div>
+          </div>
 
-        {/* Security Message */}
-        <div className="text-center mt-8 py-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Your money is always safe</h3>
-          <p className="text-gray-600">100% secure payments</p>
+          {/* Files */}
+          <div className="space-y-4 text-sm">
+            {[122.5, 320, 256].map((price, i) => (
+              <div key={i} className="flex justify-between">
+                <div>
+                  <p className="font-medium">File {i + 1} - Jay Vasani UX nhj& Pro</p>
+                  <p className="text-gray-600">1 page, Black & White, Portrait<br />15 Copies</p>
+                </div>
+                <p className="text-green-600 font-semibold">₹{price}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Bill Summary */}
+          <div className="text-sm space-y-2">
+            <div className="flex justify-between">
+              <p>Subtotal</p>
+              <p>₹{orderSummary.subtotal}</p>
+            </div>
+            <div className="flex justify-between">
+              <p>Delivery charges</p>
+              <p>₹{orderSummary.deliveryCharges}</p>
+            </div>
+            <div className="flex justify-between">
+              <p>Tax ({orderSummary.taxRate}%)</p>
+              <p>₹{orderSummary.tax}</p>
+            </div>
+            <div className="flex justify-between text-green-600">
+              <p>Discount Applied</p>
+              <p>-₹{discount.toFixed(2)}</p>
+            </div>
+            <hr />
+            <div className="flex justify-between font-semibold text-lg">
+              <p>Grand total</p>
+              <p>₹{orderSummary.grandTotal}</p>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Bottom Section */}
+<div className="max-w-6xl mx-auto px-4 mt-10">
+  <Card className="bg-green-50 border-green-200">
+    <CardContent className="p-4">
+      <div className="flex items-start gap-4">
+        <div className="w-2 h-2 bg-green-500 rounded-full mt-2" />
+        <div className="flex-1">
+          <p className="font-medium text-green-800">Delivering to Home</p>
+          <p className="text-sm text-green-700">
+            {addressData.name}, {addressData.address}
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="text-center">
+            <img
+              src="/placeholder.svg?height=40&width=40"
+              alt="Print Master Shop"
+              className="w-10 h-10 mx-auto mb-1"
+            />
+            <p className="font-medium text-sm">{shopData.name}</p>
+            <p className="text-xs text-gray-600">{shopData.description}</p>
+          </div>
+          <Button
+            className="bg-blue-900 hover:bg-blue-800 text-white px-8"
+            disabled={!selectedPayment}
+          >
+            Pay ₹ {orderSummary.grandTotal}
+          </Button>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+</div>
+
+      {/* Security Message */}
+      <div className="text-center mt-8 py-8">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          Your money is always safe
+        </h3>
+        <p className="text-gray-600">100% secure payments</p>
+      </div>
     </div>
-  )
+  );
 }
