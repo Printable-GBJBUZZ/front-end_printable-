@@ -6,9 +6,8 @@ import { useEffect, useState } from 'react';
 import { FaApple, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FcGoogle, } from 'react-icons/fc';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [inputValue, setInputValue] = useState('');
-  const [isValid, setIsValid] = useState(false);
   const [showOtpScreen, setShowOtpScreen] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
   const [otp, setOtp] = useState(Array(6).fill(''));
@@ -17,27 +16,33 @@ export default function LoginPage() {
   const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
 
+  // New validation states
+  const [isPhoneValid, setIsPhoneValid] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
 
-  // Validate input (email or phone)
+  // Validate phone and email separately
   useEffect(() => {
     const phoneRegex = /^[6-9]\d{9}$/;
+    setIsPhoneValid(phoneRegex.test(phone));
+  }, [phone]);
+
+  useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    setIsValid(phoneRegex.test(inputValue) || emailRegex.test(inputValue));
-  }, [inputValue]);
+    setIsEmailValid(emailRegex.test(email));
+  }, [email]);
 
   // Handle Continue
   const handleContinue = () => {
-  const phoneRegex = /^[6-9]\d{9}$/;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (phoneRegex.test(inputValue)) {
-    setShowOtpScreen(true);
-    setResendTimer(30);
-  } else if (emailRegex.test(inputValue)) {
-    setShowPasswordInput(true); // Show password input on valid email
-  }
-};
+    if (isPhoneValid || isEmailValid) {
+      setInputValue(phone || email); // Store the value for OTP display
+      setShowOtpScreen(true);        // Show OTP screen
+    }
+  };
 
   // OTP input handling
   const handleOtpChange = (value: string, index: number) => {
@@ -60,7 +65,7 @@ export default function LoginPage() {
     return () => clearInterval(interval);
   }, [showOtpScreen, resendTimer]);
 
-  if (showOtpScreen) {
+  if (showOtpScreen && !otpVerified) {
     return (
       <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
         <Image src="/login-bg.svg" alt="Background" fill className="object-cover -z-10" priority />
@@ -68,9 +73,8 @@ export default function LoginPage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Verification Code</h2>
           <p className="text-sm text-gray-600 mb-4">
             Enter the 6-digit verification code sent to{' '}
-            <span className="text-blue-700 font-medium">+91 {inputValue}</span>
+            <span className="text-blue-700 font-medium">{inputValue}</span>
           </p>
-
           <div className="flex justify-between gap-2 mb-6">
             {otp.map((digit, index) => (
               <input
@@ -84,11 +88,21 @@ export default function LoginPage() {
               />
             ))}
           </div>
-
-          <button className="w-full py-2 rounded-lg bg-[#06044B] text-white font-medium text-sm hover:bg-[#38366F] mb-4">
+          <button
+            className="w-full py-2 rounded-lg bg-[#06044B] text-white font-medium text-sm hover:bg-[#38366F] mb-4"
+            onClick={() => {
+              // Replace this with your real OTP check
+              if (otp.join('').length === 6) {
+                setOtpVerified(true);
+                setShowOtpScreen(false);
+                setShowPasswordInput(true);
+              } else {
+                alert('Please enter the 6-digit OTP');
+              }
+            }}
+          >
             Continue
           </button>
-
           <p className="text-sm text-gray-600">Didn't receive the code?</p>
           <p className="text-sm mt-1 text-black font-medium">Resend after: 00:{resendTimer.toString().padStart(2, '0')}</p>
         </div>
@@ -98,21 +112,35 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      <Image src="/login-bg.svg" alt="Background" fill className="object-cover -z-10" priority />
+      <Image src="/bg-sign-up.png" alt="Background" fill className="object-cover -z-10" priority />
 
       <div className="bg-white w-full max-w-md p-8 rounded-2xl shadow-xl text-center z-10">
         <div className="flex justify-center mt-4 mb-4">
           <Image src="/logo.png" alt="Logo" width={100} height={100} />
         </div>
 
-        <h2 className="text-xl font-semibold text-gray-900 mb-1">Login</h2>
-        <p className="text-sm text-gray-600 mb-6">to continue to your Printable account.</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome to Printable!</h1>
+        <p className="text-sm font-semibold text-black mb-6">Sign up and start using Print & Delivery.</p>
 
         <input
           type="text"
-          placeholder="Email or Phone number"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Enter Full Name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4ade80]"
+        />
+        <input
+          type="text"
+          placeholder="Phone Number"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4ade80]"
+        />
+        <input
+          type="text"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4ade80]"
         />
         
@@ -147,20 +175,20 @@ export default function LoginPage() {
         alert('Logging in...');
       }
     } else {
-      handleContinue(); // Shows OTP or password input
+      handleContinue(); // Now shows OTP input if phone or email is valid
     }
   }}
   disabled={
     (showPasswordInput && password.length < 6) ||
-    (!showPasswordInput && !isValid)
+    (!showPasswordInput && !(isPhoneValid || isEmailValid))
   }
   className={`w-full py-2 mt-4 rounded-lg font-medium text-sm transition-all duration-300 ${
-    (showPasswordInput && password.length >= 6) || (!showPasswordInput && isValid)
+    (showPasswordInput && password.length >= 6) || (!showPasswordInput && (isPhoneValid || isEmailValid))
       ? 'bg-[#06044B] text-white hover:bg-[#38366F]'
       : 'bg-gray-300 text-white cursor-not-allowed'
   }`}
 >
-  Continue
+  Create account
 </button>
 
 {/* Forgot password — Show only when password is visible */}
@@ -172,7 +200,14 @@ export default function LoginPage() {
 
 
 
-        
+        <div>
+          <p className="text-bold text-[12px] py-2 text-black">
+            By creating an account, you are agreeing to our{' '}
+            <span className="text-blue-600 font-medium cursor-pointer hover:underline">Terms of Service</span>
+            {' '}and acknowledging receipt of our{' '}
+            <span className="text-blue-600 font-medium cursor-pointer hover:underline">Privacy Policy</span>
+          </p>
+        </div>
 
         <div className="flex items-center my-4">
           <hr className="flex-grow border-gray-300" />
@@ -192,12 +227,12 @@ export default function LoginPage() {
         </div>
 
         <p className="text-sm text-gray-600">
-  Don't have an account?{' '}
+  Already have an account?{' '}
   <Link
-    href="/sign-up" // replace this with your actual route later
+    href="/log_in" // replace this with your actual route later
     className="text-blue-600 font-medium hover:underline"
   >
-    Sign up
+    Log in
   </Link>
 </p>
       </div>
