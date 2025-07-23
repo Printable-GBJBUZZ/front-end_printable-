@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { motion, AnimatePresence } from 'framer-motion';
 export default function Scanner() {
   const faqData = [
     {
@@ -291,9 +292,19 @@ export default function Scanner() {
               </button>
             </div>
 
-            {openIndex === i && (
-              <p className="text-gray-600 mt-3">{item.answer}</p>
-            )}
+            <AnimatePresence>
+              {openIndex === i && (
+                <motion.p
+                  className="text-gray-600 mt-3"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {item.answer}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </div>
         ))}
       </div>
