@@ -1,9 +1,8 @@
-// app/account/page.tsx
+
 "use client";
 
 import Sidebar from "@/components/UserProfile/sidebar"; 
 import { motion } from "framer-motion";
-// import MyOrders from "@/components/UserProfile/my_orders";
 import SavedAddresses from "@/components/UserProfile/address/address";
 
 const mockUser = {

@@ -108,7 +108,7 @@ const tools = [
       },
       {
         title: "Scan",
-        items: [{ icon: <LuFileScan size={16}/>, label: "PDF Scanner", link: "/tools/pdf-scanner" }],
+        items: [{ icon: <LuFileScan size={16}/>, label: "PDF Scanner", link: "/scanner" }],
       },
     ],
   },

@@ -223,7 +223,7 @@ export function NavBar() {
 
             {/* Print & Deliver */}
             <Link
-              href={`/print-and-deliver/${User.user?.id}`}
+              href={`/print-and-deliver/print`}
               className="block px-3 py-2 text-base font-medium hover:bg-[#06044b]/50 rounded-md"
             >
               Print & Deliver
