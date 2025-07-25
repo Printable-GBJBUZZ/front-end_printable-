@@ -18,6 +18,7 @@ type Slide = {
   title: string;
   content: string[];
   background: string;
+
 };
 
 type Presentation = {
@@ -145,7 +146,7 @@ export default function AIPresentationGenerator() {
           title: slideTitle,
           content,
           background:
-            template?.bgClass ||
+            template?.backgroundColor ||
             "bg-gradient-to-br from-purple-300 via-blue-300 to-teal-200",
         });
       }

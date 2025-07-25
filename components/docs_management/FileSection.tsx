@@ -103,7 +103,7 @@ const FileSection: React.FC<FileSectionProps> = ({
     }
   }, [order.documents, isPageTransition]);
   useEffect(() => {
-    const handleCtrlPress = (e) => {
+    const handleCtrlPress = (e : any) => {
       if (select && e.key == "Control") {
         console.log("select");
       } else {
@@ -231,7 +231,7 @@ const FileSection: React.FC<FileSectionProps> = ({
                   {openFileMenuIndex === item.fileId && (
                     <motion.div
                       data-file-menu={item.fileId}
-                      ref={(el) => (fileMenuRefs.current[item.fileId] = el)}
+                      ref={(el : any) => (fileMenuRefs.current[item.fileId] = el)}
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}

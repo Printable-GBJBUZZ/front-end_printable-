@@ -76,10 +76,10 @@ function FileManagerContainer() {
   });
   const [newFolderName, setNewFolderName] = useState("");
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const emptyStateFileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null) as React.RefObject<HTMLInputElement>;
+  const emptyStateFileInputRef = useRef<HTMLInputElement>(null) as React.RefObject<HTMLInputElement>;
   const dropAreaRef = useRef<HTMLDivElement>(null);
-  const addMenuRef = useRef<HTMLDivElement>(null);
+  const addMenuRef = useRef<HTMLDivElement>(null) as React.RefObject<HTMLDivElement>;
 
   // Close menus when clicking outside
   useEffect(() => {

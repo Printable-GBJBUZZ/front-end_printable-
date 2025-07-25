@@ -39,7 +39,7 @@ const Convertion = () => {
   };
   return (
     <><h1 className="font-bold text-black text-lg bg-[#FFFFFF] shadow-sm border-b border-gray-300">
-        Marge PDF
+        Merge PDF
       </h1>
     <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-100">
       <h1 className="text-[42px] font-bold mb-4">PDF to <span className="uppercase">{fileName}</span> Converter</h1>

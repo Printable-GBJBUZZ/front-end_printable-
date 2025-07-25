@@ -1,13 +1,25 @@
 
-import React from 'react';
-import AI from '@/components/Generate/ai'; // Make sure this import path is correct
+// import React from 'react';
+// import AI from '@/components/Generate/ai'; // Make sure this import path is correct
 
-const GeneratePage = () => {
+// const GeneratePage = () => {
+//   return (
+//     <div>
+//       <AI />
+//     </div>
+//   );
+// };
+
+// export default GeneratePage;
+
+
+
+export default function page() {
   return (
     <div>
-      <AI />
+      Hello World
     </div>
-  );
-};
+  )
+}
 
-export default GeneratePage;
+

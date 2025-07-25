@@ -161,8 +161,8 @@ function EditCard({ index, type }: { index: number; type: string }) {
               className="w-full bg-transparent outline-none text-black text-base font-normal placeholder:text-black placeholder:opacity-70"
               style={{ letterSpacing: "1px", cursor: "pointer" }}
               onClick={() => {
-                document.getElementById(`date-native-${index}`)?.showPicker?.();
-                document.getElementById(`date-native-${index}`)?.focus();
+                (document.getElementById(`date-native-${index}`) as HTMLInputElement)?.showPicker?.();
+                (document.getElementById(`date-native-${index}`) as HTMLInputElement)?.focus();
               }}
             />
             {/* Hidden native date input for modal */}

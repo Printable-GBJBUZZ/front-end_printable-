@@ -28,7 +28,7 @@ const convertToPDF = [
   { icon: <PiFileXls size={16} />, label: "Excel to PDF", link: "/to-pdf-conversion" },
   { icon: <PiFilePpt size={16} />, label: "PPT to PDF", link: "/to-pdf-conversion" },
   { icon: <FaImage size={16} />, label: "JPG to PDF", link: "/to-pdf-conversion" },
-  { icon: <MdOutlineDocumentScanner  size={16}/>, label: "PDF to OCR", link: "/tools/pdf-to-ocr" },
+  { icon: <MdOutlineDocumentScanner  size={16}/>, label: "PDF to OCR", link: "" },
 ];
 
 const ConvertTools = () => {

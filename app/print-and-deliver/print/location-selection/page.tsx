@@ -39,6 +39,7 @@ interface Merchant {
   duration: string;
   durationInTraffic: string;
   address?: string; // ADDED: Address can be optional if not always returned or needed for InfoWindow
+  services?: string[]; // ADDED: Optional services property
 }
 
 // Mock merchant data - UPDATED WITH LATITUDE AND LONGITUDE
