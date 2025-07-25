@@ -2,15 +2,20 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FaApple, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { FcGoogle, } from 'react-icons/fc';
+import { FaApple, FaEye, FaEyeSlash, FaSpinner } from 'react-icons/fa';
+import { FcGoogle } from 'react-icons/fc';
 
 export default function SignupPage() {
+  const router = useRouter();
+
+  // States
   const [inputValue, setInputValue] = useState('');
   const [showOtpScreen, setShowOtpScreen] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
   const [otp, setOtp] = useState(Array(6).fill(''));
+  const [otpVerified, setOtpVerified] = useState(false);
 
   const [password, setPassword] = useState('');
   const [showPasswordInput, setShowPasswordInput] = useState(false);
@@ -20,27 +25,49 @@ export default function SignupPage() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
 
-  // New validation states
   const [isPhoneValid, setIsPhoneValid] = useState(false);
   const [isEmailValid, setIsEmailValid] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
 
-  // Validate phone and email separately
+  const [loading, setLoading] = useState(false);
+
+  // Phone validation
   useEffect(() => {
     const phoneRegex = /^[6-9]\d{9}$/;
     setIsPhoneValid(phoneRegex.test(phone));
   }, [phone]);
 
+  // Email validation
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setIsEmailValid(emailRegex.test(email));
   }, [email]);
 
-  // Handle Continue
+  // Resend timer countdown
+  useEffect(() => {
+    if (!showOtpScreen || resendTimer === 0) return;
+    const interval = setInterval(() => {
+      setResendTimer((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [showOtpScreen, resendTimer]);
+
+  // Loading and redirect after account creation
+  useEffect(() => {
+    if (loading) {
+      const timer = setTimeout(() => {
+        setLoading(false);
+        router.push('/'); // Change '/' to your home page route if needed
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [loading, router]);
+
+  // Handle Continue (show OTP)
   const handleContinue = () => {
     if (isPhoneValid || isEmailValid) {
-      setInputValue(phone || email); // Store the value for OTP display
-      setShowOtpScreen(true);        // Show OTP screen
+      setInputValue(phone || email);
+      setShowOtpScreen(true);
+      setResendTimer(30);
     }
   };
 
@@ -56,19 +83,11 @@ export default function SignupPage() {
     }
   };
 
-  // Resend timer countdown
-  useEffect(() => {
-    if (!showOtpScreen || resendTimer === 0) return;
-    const interval = setInterval(() => {
-      setResendTimer((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [showOtpScreen, resendTimer]);
-
+  // OTP Screen
   if (showOtpScreen && !otpVerified) {
     return (
       <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-        <Image src="/login-bg.svg" alt="Background" fill className="object-cover -z-10" priority />
+        <Image src="/bg-sign-up.png" alt="Background" fill className="object-cover -z-10" priority />
         <div className="bg-white w-full max-w-md p-8 rounded-2xl shadow-xl text-center z-10">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Verification Code</h2>
           <p className="text-sm text-gray-600 mb-4">
@@ -91,7 +110,6 @@ export default function SignupPage() {
           <button
             className="w-full py-2 rounded-lg bg-[#06044B] text-white font-medium text-sm hover:bg-[#38366F] mb-4"
             onClick={() => {
-              // Replace this with your real OTP check
               if (otp.join('').length === 6) {
                 setOtpVerified(true);
                 setShowOtpScreen(false);
@@ -104,12 +122,27 @@ export default function SignupPage() {
             Continue
           </button>
           <p className="text-sm text-gray-600">Didn't receive the code?</p>
-          <p className="text-sm mt-1 text-black font-medium">Resend after: 00:{resendTimer.toString().padStart(2, '0')}</p>
+          <p className="text-sm mt-1 text-black font-medium">
+            Resend after: 00:{resendTimer.toString().padStart(2, '0')}
+          </p>
         </div>
       </div>
     );
   }
 
+  // Loading screen after account creation
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center" style={{ background: '#06044B' }}>
+        <FaSpinner className="animate-spin text-3xl text-white mb-6" />
+        <h2 className="text-2xl font-bold text-white text-center">
+          Welcome to Printable, {fullName}...
+        </h2>
+      </div>
+    );
+  }
+
+  // Main Sign Up Form
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
       <Image src="/bg-sign-up.png" alt="Background" fill className="object-cover -z-10" priority />
@@ -143,62 +176,59 @@ export default function SignupPage() {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4ade80]"
         />
-        
-{/* Password Input (only if needed) */}
-{showPasswordInput && (
-  <div className="mt-4 transition-all duration-300">
-    <div className="relative">
-      <input
-        type={showPassword ? "text" : "password"}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md"
-      />
-      <button
-        type="button"
-        onClick={() => setShowPassword(!showPassword)}
-        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-      >
-        {showPassword ? <FaEyeSlash /> : <FaEye />}
-      </button>
-    </div>
-  </div>
-)}
 
+        {/* Password Input (only if needed) */}
+        {showPasswordInput && (
+          <div className="mt-4 transition-all duration-300">
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+          </div>
+        )}
 
-{/* Continue Button — Always Visible */}
-<button
-  onClick={() => {
-    if (showPasswordInput) {
-      if (password.length >= 6) {
-        alert('Logging in...');
-      }
-    } else {
-      handleContinue(); // Now shows OTP input if phone or email is valid
-    }
-  }}
-  disabled={
-    (showPasswordInput && password.length < 6) ||
-    (!showPasswordInput && !(isPhoneValid || isEmailValid))
-  }
-  className={`w-full py-2 mt-4 rounded-lg font-medium text-sm transition-all duration-300 ${
-    (showPasswordInput && password.length >= 6) || (!showPasswordInput && (isPhoneValid || isEmailValid))
-      ? 'bg-[#06044B] text-white hover:bg-[#38366F]'
-      : 'bg-gray-300 text-white cursor-not-allowed'
-  }`}
->
-  Create account
-</button>
+        {/* Continue/Create Account Button */}
+        <button
+          onClick={() => {
+            if (showPasswordInput) {
+              if (password.length >= 6) {
+                setLoading(true);
+              }
+            } else {
+              handleContinue();
+            }
+          }}
+          disabled={
+            (showPasswordInput && password.length < 6) ||
+            (!showPasswordInput && !(isPhoneValid || isEmailValid))
+          }
+          className={`w-full py-2 mt-4 rounded-lg font-medium text-sm transition-all duration-300 ${
+            (showPasswordInput && password.length >= 6) || (!showPasswordInput && (isPhoneValid || isEmailValid))
+              ? 'bg-[#06044B] text-white hover:bg-[#38366F]'
+              : 'bg-gray-300 text-white cursor-not-allowed'
+          }`}
+        >
+          Create account
+        </button>
 
-{/* Forgot password — Show only when password is visible */}
-{showPasswordInput && (
-  <p className="text-sm text-center text-blue-600 mt-2 cursor-pointer hover:underline">
-    Forgot password?
-  </p>
-)}
-
-
+        {/* Forgot password — Show only when password is visible */}
+        {showPasswordInput && (
+          <p className="text-sm text-center text-blue-600 mt-2 cursor-pointer hover:underline">
+            Forgot password?
+          </p>
+        )}
 
         <div>
           <p className="text-bold text-[12px] py-2 text-black">
@@ -227,14 +257,14 @@ export default function SignupPage() {
         </div>
 
         <p className="text-sm text-gray-600">
-  Already have an account?{' '}
-  <Link
-    href="/log_in" // replace this with your actual route later
-    className="text-blue-600 font-medium hover:underline"
-  >
-    Log in
-  </Link>
-</p>
+          Already have an account?{' '}
+          <Link
+            href="/log_in"
+            className="text-blue-600 font-medium hover:underline"
+          >
+            Log in
+          </Link>
+        </p>
       </div>
     </div>
   );
