@@ -17,18 +17,18 @@ import {
 import React from "react";
 
 const convertFromPDF = [
-  { icon: <BsFiletypeDoc size={16} />, label: "PDF To Word", link: "/pdftoword" },
-  { icon: <PiFileXls size={16} />, label: "PDF To Excel", link: "/from-pdf-conversion" },
-  { icon: <PiFilePpt size={16} />, label: "PDF To PPT", link: "/from-pdf-conversion" },
-  { icon: <FaImage size={16} />, label: "PDF To JPG", link: "/from-pdf-conversion" },
+  { icon: <BsFiletypeDoc size={16} />, label: "PDF To Word", link: "/pdf/to/word" },
+  { icon: <PiFileXls size={16} />, label: "PDF To Excel", link: "/pdf/to/excel" },
+  { icon: <PiFilePpt size={16} />, label: "PDF To PPT", link: "/pdf/to/ppt" },
+  { icon: <FaImage size={16} />, label: "PDF To JPG", link: "/pdf/to/jpg" },
+  { icon: <MdOutlineDocumentScanner  size={16}/>, label: "PDF to OCR", link: "/pdf/to/ocr" },
 ];
 
 const convertToPDF = [
-  { icon: <BsFiletypeDoc size={16} />, label: "Word to PDF", link: "/to-pdf-conversion" },
-  { icon: <PiFileXls size={16} />, label: "Excel to PDF", link: "/to-pdf-conversion" },
-  { icon: <PiFilePpt size={16} />, label: "PPT to PDF", link: "/to-pdf-conversion" },
-  { icon: <FaImage size={16} />, label: "JPG to PDF", link: "/to-pdf-conversion" },
-  { icon: <MdOutlineDocumentScanner  size={16}/>, label: "PDF to OCR", link: "" },
+  { icon: <BsFiletypeDoc size={16} />, label: "Word to PDF", link: "/word/to/pdf" },
+  { icon: <PiFileXls size={16} />, label: "Excel to PDF", link: "/excel/to/pdf" },
+  { icon: <PiFilePpt size={16} />, label: "PPT to PDF", link: "/ppt/to/pdf" },
+  { icon: <FaImage size={16} />, label: "JPG to PDF", link: "/jpg/to/pdf" },
 ];
 
 const ConvertTools = () => {
