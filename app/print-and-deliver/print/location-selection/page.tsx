@@ -31,9 +31,14 @@ import TotalFilesIcon from "@/public/Print&Deliver/TotalFilesIcon";
 import LocationPin from "@/public/Print&Deliver/LocationPin";
 import BookMark from "@/public/Print&Deliver/BookMark";
 import Share from "@/public/Print&Deliver/Share";
-import CartPanel from "./CartPanel";
-import CartPanelProduct from "./CartPanelProduct";
+import CartPanel from "./Components/CartPanel";
+import CartPanelProduct from "./Components/CartPanelProduct";
 import { getTotalDocument } from "../TotalDocument";
+import SummaryBarNotSelected from "./Components/SummaryBarNotSelected";
+import SummaryBarSelected from "./Components/SummaryBarSelected";
+import { Order } from "@/context/orderContext"; // Make sure this is the correct path
+import BottomNavigation from "./Components/BottomNavigation";
+import MerchantImage from "./Components/MerchantImage";
 
 interface Merchant {
   merchantId: string;
@@ -935,6 +940,7 @@ export default function LocationSelectionPage() {
       {/* Cart Panel */}
       <CartPanel
         isOpen={isCartOpen}
+        order={order}
         onClose={() => setIsCartOpen(false)}
         cartItems={cartItems}
         onChangeStore={() => {
@@ -944,6 +950,8 @@ export default function LocationSelectionPage() {
             .getElementById("merchant-list")
             ?.scrollIntoView({ behavior: "smooth" });
         }}
+        selectedMerchant={selectedMerchant}
+        merchants={nearbyMerchants}
       />
 
       <div className="px-[40px] flex flex-col items-center ">
@@ -964,10 +972,19 @@ export default function LocationSelectionPage() {
           <div className="rounded-xl p-8 w-full h-full max-w-6xl mb-8">
             {renderLocationPermissionMessage()}
 
+            {/* heading  */}
             <div className=" h-[32px] flex flex-row items-center mb-[16px]">
               <h3 className="text-[24px] font-bold">Shops near your area</h3>
-              <h3 className=" h-[32px] text-[16px] ml-[10px] flex items-end">
-                (123 Main St, New York, NY 10001...)
+              <h3 className="h-[32px] text-[16px] ml-[10px] flex items-end">
+                (
+                {selectedLocation?.address
+                  ? selectedLocation.address.length > 30
+                    ? `${selectedLocation.address.substring(0, 28)}...`
+                    : selectedLocation.address
+                  : userLocation
+                  ? "Current Location"
+                  : "No location selected"}
+                )
               </h3>
             </div>
 
@@ -990,7 +1007,8 @@ export default function LocationSelectionPage() {
                       return 0;
                     })
                     .map((merchant, idx) => {
-                      const isSelected = selectedMerchant === merchant.merchantId;
+                      const isSelected =
+                        selectedMerchant === merchant.merchantId;
                       return (
                         <div key={merchant.merchantId} className="relative">
                           {/* Merchant Card */}
@@ -1019,14 +1037,19 @@ export default function LocationSelectionPage() {
                             >
                               {/* Content area: scrollable if content is too much */}
                               <div className="flex-grow overflow-y-auto">
-                                <img
-                                  src={
-                                    merchant.MerchantImages[0] ||
-                                    "/shopimage.png"
-                                  }
-                                  alt={merchant.shopName}
-                                  className="w-full h-40 object-cover rounded-xl"
-                                />
+                                {/* //merchant image */}
+                                <div>
+                                  <MerchantImage
+                                    src={
+                                      merchant.MerchantImages[0] ||
+                                      "/shopimage.png"
+                                    }
+                                    alt={merchant.shopName}
+                                    googleDistance={merchant.googleDistance}
+                                    duration={merchant.duration}
+                                    deliveryType="Pick Up" // or "Home Delivery" if appropriate
+                                  />
+                                </div>
                                 <div className="pt-4">
                                   <div className="flex justify-between items-start mb-[7px]">
                                     <h4 className="text-[20px] font-bold text-[#000000] leading-tight">
@@ -1063,75 +1086,25 @@ export default function LocationSelectionPage() {
                               </div>
 
                               {/* Bottom Navigation (fixed at bottom of card) */}
-                              <div className="mt-auto w-full flex flex-row justify-between items-center pt-4">
-                                <div className="w-[40px] h-[40px] bg-[#EFFDF3] border-[1px] border-[#61E987] rounded-[8px] flex justify-center items-center hover:bg-[#e1f9e7] hover:shadow transition-all duration-300">
-                                  <Share />
-                                </div>
-                                <div className="w-[40px] h-[40px] bg-[#EFFDF3] border-[1px] border-[#61E987] rounded-[8px] flex justify-center items-center hover:bg-[#e1f9e7] hover:shadow transition-all duration-300">
-                                  <BookMark />
-                                </div>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelectedMerchant((prev) =>
-                                      prev === merchant.merchantId
-                                        ? null
-                                        : merchant.merchantId
-                                    );
-                                  }}
-                                  onMouseEnter={() =>
-                                    setHoveredMerchant(merchant.merchantId)
-                                  }
-                                  onMouseLeave={() => setHoveredMerchant(null)}
-                                  className={cn(
-                                    "w-[170px] h-[40px] text-sm font-medium py-2 border rounded-lg",
-                                    "transition-all duration-300 ease-in-out",
-                                    "hover:shadow",
-                                    selectedMerchant === merchant.merchantId
-                                      ? "bg-[#61E987] border-[1px] border-[#61E987] text-white hover:bg-[#4ade80] hover:border-[#4ade80] shadow"
-                                      : "bg-[#EFFDF3] border-[1px] border-[#61E987] text-[#06044b] hover:bg-[#61E987] hover:text-white"
-                                  )}
-                                >
-                                  {selectedMerchant === merchant.merchantId
-                                    ? "Selected"
-                                    : hoveredMerchant === merchant.merchantId
-                                    ? "Selected"
-                                    : "Select Shop"}
-                                </button>
-                              </div>
+                              <BottomNavigation
+                                merchant={merchant}
+                                selectedMerchant={selectedMerchant}
+                                setSelectedMerchant={setSelectedMerchant}
+                                hoveredMerchant={hoveredMerchant}
+                                setHoveredMerchant={setHoveredMerchant}
+                              />
                             </div>
                           </div>
 
                           {/* If selected, render summary bar right below this card */}
                           {isSelected && (
-                            <div
-                              className={cn(
-                                "absolute left-0 top-full mt-4",
-                                "w-[1120px] h-[100px] flex flex-row items-center justify-between border-[1px] border-[#61E987] px-[20px] py-[17.5px] rounded-lg bg-[#EFFDF3]",
-                                "z-10"
-                              )}
-                              style={{
-                                gridColumn: `span 3 / span 3`,
-                                marginLeft: `-${(idx % 3) * 320}px`, // 300px card + 20px gap
-                              }}
-                            >
-                              <div className="flex items-center space-x-[20px]">
-                                <TotalFilesIcon />
-                                <span className="text-[14px] font-medium text-[#555555]">
-                                  Total {getTotalDocument(order.documents)}{" "}
-                                  Items
-                                </span>
-                              </div>
-                              <Button
-                                className="bg-[#06044b] hover:bg-[#3822b8] text-white px-6 py-2 rounded-lg"
-                                disabled={
-                                  !selectedMerchant || isLoadingMerchants
-                                }
-                                onClick={handleViewCart}
-                              >
-                                View Cart
-                              </Button>
-                            </div>
+                            <SummaryBarSelected
+                              idx={idx}
+                              order={order}
+                              selectedMerchant={selectedMerchant}
+                              isLoadingMerchants={isLoadingMerchants}
+                              handleViewCart={handleViewCart}
+                            />
                           )}
                         </div>
                       );
@@ -1139,23 +1112,11 @@ export default function LocationSelectionPage() {
 
                   {/* Summary bar as last grid item when no merchant is selected */}
                   {!selectedMerchant && (
-                    <div className="col-span-1 sm:col-span-2 lg:col-span-3">
-                      <div className="w-[1120px] h-[100px] flex flex-row items-center justify-between border-[1px] border-[#61E987] px-[20px] py-[17.5px] rounded-lg bg-[#EFFDF3] mt-8 mx-auto">
-                        <div className="flex items-center space-x-[20px]">
-                          <TotalFilesIcon />
-                          <span className="text-[14px] font-medium text-[#555555]">
-                            Total {getTotalDocument(order.documents)} Items
-                          </span>
-                        </div>
-                        <Button
-                          className="bg-[#06044b] hover:bg-[#3822b8] text-white px-6 py-2 rounded-lg"
-                          disabled={isLoadingMerchants}
-                          onClick={handleViewCart}
-                        >
-                          View Cart
-                        </Button>
-                      </div>
-                    </div>
+                    <SummaryBarNotSelected
+                      order={order}
+                      isLoadingMerchants={isLoadingMerchants}
+                      handleViewCart={handleViewCart}
+                    />
                   )}
                 </div>
               </div>

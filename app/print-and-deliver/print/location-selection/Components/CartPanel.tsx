@@ -1,10 +1,15 @@
 import { X } from "lucide-react";
 import Store from "@/public/Print&Deliver/Store";
 import CartPanelProduct from "./CartPanelProduct";
+import { useOrder } from "@/context/orderContext";
+import { useState } from "react";
+import { getTotalDocument } from "../../TotalDocument";
+import { Order } from "@/context/orderContext";
 
 
 interface CartPanelProps {
   isOpen: boolean;
+  order: Order;
   onClose: () => void;
   cartItems: Array<{
     id: number;
@@ -13,11 +18,30 @@ interface CartPanelProps {
     copies: number;
     price: number;
   }>;
-  onChangeStore?: () => void; // <-- Add this line
+  onChangeStore?: () => void;
+  selectedMerchant?: string | null;
+  merchants?: Array<{
+    merchantId: string;
+    shopName: string;
+    address?: string;
+  }>;
 }
 
-export default function CartPanel({ isOpen, onClose, cartItems, onChangeStore }: CartPanelProps) {
+export default function CartPanel({
+  isOpen,
+  order,
+  onClose,
+  cartItems,
+  onChangeStore,
+  selectedMerchant,
+  merchants = [],
+}: CartPanelProps) {
   if (!isOpen) return null;
+
+  // Find the selected merchant details
+  const selectedMerchantData = merchants.find(
+    (m) => m.merchantId === selectedMerchant
+  );
 
   return (
     <div className="fixed inset-0 z-50">
@@ -42,7 +66,9 @@ export default function CartPanel({ isOpen, onClose, cartItems, onChangeStore }:
           <div className="px-[16px] py-[20px] w-[410px] bg-white rounded-[12px]">
             {/* top nav bar */}
             <div className="w-[378px] h-[19px] flex flex-row justify-between">
-              <div className="text-[14px] text-[#555555]">Files (3)</div>
+              <div className="text-[14px] text-[#555555]">
+                Files ({getTotalDocument(order.documents)})
+              </div>
               <div className="flex flex-row">
                 <div className="text-[14px] text-[#34C759] hover:cursor-pointer">
                   Edit
@@ -75,10 +101,15 @@ export default function CartPanel({ isOpen, onClose, cartItems, onChangeStore }:
 
                 {/* content */}
                 <div className="flex flex-col">
-                  <div className="font-bold"> Print Master Shop </div>
+                  <div className="font-bold">
+                    {selectedMerchantData?.shopName || "Select a shop"}
+                  </div>
                   <div className="text-[#555555] text-[14px]">
-                    {" "}
-                    123 Main St, New York, NY 10001...{" "}
+                    {selectedMerchantData?.address
+                      ? selectedMerchantData.address.length > 30
+                        ? `${selectedMerchantData.address.substring(0, 28)}...`
+                        : selectedMerchantData.address
+                      : "No address selected"}
                   </div>
                 </div>
               </div>
