@@ -28,6 +28,7 @@ import {
 import { useOrder, type DocumentItem } from "@/context/orderContext";
 import UseStorage from "@/hooks/useStorage";
 import { useRouter } from "next/navigation";
+import { getTotalDocument } from "./TotalDocument";
 
 export default function Component() {
   const { order, dispatch } = useOrder();
@@ -154,12 +155,6 @@ export default function Component() {
     );
   };
 
-  const getTotalPages = () => {
-    return order.documents.reduce((total, doc) => {
-      return total + (doc.copies || 1);
-    }, 0);
-  };
-
   useEffect(() => {
     if (
       selectedDocumentIndex >= order.documents.length &&
@@ -179,7 +174,11 @@ export default function Component() {
         {/* Status Message */}
         {statusMessage && (
           <div
-            className={`mb-4 p-3 rounded-lg ${statusMessage.isError ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}
+            className={`mb-4 p-3 rounded-lg ${
+              statusMessage.isError
+                ? "bg-red-100 text-red-700"
+                : "bg-green-100 text-green-700"
+            }`}
           >
             {statusMessage.text}
           </div>
@@ -266,8 +265,8 @@ export default function Component() {
               uploadingFiles
                 ? "bg-[#dffbe7] border-[#3ae180] cursor-not-allowed"
                 : dragActive
-                  ? "bg-[#dffbe7] border-[#3ae180]"
-                  : "bg-[#effdf3] border-[#61e987] hover:bg-[#dffbe7]"
+                ? "bg-[#dffbe7] border-[#3ae180]"
+                : "bg-[#effdf3] border-[#61e987] hover:bg-[#dffbe7]"
             }`}
             onDrop={uploadingFiles ? undefined : handleDrop}
             onDragOver={uploadingFiles ? undefined : handleDragOver}
@@ -325,8 +324,11 @@ export default function Component() {
                 {applyToAll
                   ? "Customize your print job settings"
                   : order.documents.length > 0
-                    ? `Configuring: ${order.documents[selectedDocumentIndex]?.fileName || "No document selected"}`
-                    : "Add documents to configure print settings"}
+                  ? `Configuring: ${
+                      order.documents[selectedDocumentIndex]?.fileName ||
+                      "No document selected"
+                    }`
+                  : "Add documents to configure print settings"}
               </p>
             </div>
             <div className="flex items-center space-x-3">
@@ -548,7 +550,7 @@ export default function Component() {
                         if (applyToAll) {
                           updateGlobalSetting(
                             "paperSize",
-                            value as DocumentItem["paperSize"],
+                            value as DocumentItem["paperSize"]
                           );
                         } else if (order.documents[selectedDocumentIndex]) {
                           updateDocument(selectedDocumentIndex, {
@@ -589,7 +591,7 @@ export default function Component() {
                         if (applyToAll) {
                           updateGlobalSetting(
                             "printType",
-                            value as "front" | "front and back",
+                            value as "front" | "front and back"
                           );
                         } else if (order.documents[selectedDocumentIndex]) {
                           updateDocument(selectedDocumentIndex, {
@@ -623,7 +625,7 @@ export default function Component() {
                 <FileText className="w-5 h-5 text-[#3ae180]" />
               </div>
               <span className="text-sm font-medium text-[#000000]">
-                Total {getTotalPages()} documents
+                Total {getTotalDocument(order.documents)} Items
               </span>
             </div>
             <Button
