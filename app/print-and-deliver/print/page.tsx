@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { PDFDocument } from 'pdf-lib';
+import { getPdfPageCount } from '@/app/esign/components/utils/pdfUtils';
+import { v4 as uuidv4 } from 'uuid';
 import {
   Select,
   SelectContent,
@@ -32,7 +35,8 @@ import { useRouter } from "next/navigation";
 export default function Component() {
   const { order, dispatch } = useOrder();
   const router = useRouter();
-  const { uploadFile, deleteFile } = UseStorage();
+  const { deleteFile } = UseStorage();
+  const { uploadFile } = UseStorage();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [applyToAll, setApplyToAll] = useState(false);
@@ -73,19 +77,40 @@ const [selectedCover, setSelectedCover] = useState("No Cover");
   });
 
   const handleFileUpload = useCallback(
-    async (files: FileList) => {
-      setUploadingFiles(true);
-      try {
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          await uploadFile(file);
+  async (files: FileList) => {
+    setUploadingFiles(true);
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+        let pageCount = 1;
+        if (file.type === 'application/pdf') {
+          try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdfDoc = await PDFDocument.load(arrayBuffer);
+            pageCount = pdfDoc.getPageCount();
+          } catch (err) {
+            console.error('Failed to read PDF page count:', err);
+          }
         }
-      } finally {
-        setUploadingFiles(false);
+
+        const fileWithMeta = {
+          id: uuidv4(),
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          pages: pageCount,
+        };
+
+        await uploadFile(file, fileWithMeta); // Ensure uploadFile supports 2 args
       }
-    },
-    [uploadFile],
-  );
+    } finally {
+      setUploadingFiles(false);
+    }
+  },
+  [uploadFile]
+);
+
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -670,94 +695,119 @@ const [selectedCover, setSelectedCover] = useState("No Cover");
     {activePaperTab === "size" && (
       <div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {[
-            { label: "A4", sub: "8.27 x 11.69 in" },
-            { label: "Letter", sub: "8.5 x 11 in" },
-            { label: "Legal", sub: "8.5 x 14 in" },
-            { label: "A3", sub: "11.69 x 16.53 in" },
-            { label: "Tabloid", sub: "11 x 17 in" },
-            { label: "Statement", sub: "5.5 x 8.7 in" },
-            { label: "A5", sub: "5.83 x 8.27 in" },
-          ].map(option => (
-            <button
-              key={option.label}
-              onClick={() => setSelectedPaperSize(option.label)}
-              className={`w-full text-left p-4 border rounded-xl transition-colors
-                ${selectedPaperSize === option.label
-                  ? 'border-[#3ae180] bg-[#effdf3]'
-                  : 'border-[#e6e6ed] bg-[#F4F7FA] hover:border-[#3ae180]'
-                }`}
-            >
-              <div className="font-medium text-[#06044B]">{option.label}</div>
-              <div className="text-xs text-[#A0A0AF]">{option.sub}</div>
-            </button>
-          ))}
+  {[
+    { label: "A4", sub: "8.27 x 11.69 in" },
+    { label: "Letter", sub: "8.5 x 11 in" },
+    { label: "Legal", sub: "8.5 x 14 in" },
+    { label: "A3", sub: "11.69 x 16.53 in" },
+    { label: "Tabloid", sub: "11 x 17 in" },
+    { label: "Statement", sub: "5.5 x 8.7 in" },
+    { label: "A5", sub: "5.83 x 8.27 in" },
+  ].map(option => {
+    const isSelected = selectedPaperSize === option.label;
+    return (
+      <button
+        key={option.label}
+        type="button"
+        onClick={() => setSelectedPaperSize(option.label)}
+        className={`
+          w-full flex items-center
+          p-4
+          rounded-xl
+          transition-colors
+          border-2
+          ${isSelected 
+            ? "border-[#3ae180] bg-[#effdf3]"
+            : "border-[#E6E6ED] bg-[#F4F7FA] hover:border-[#3ae180]"}
+        `}
+      >
+        <div className="flex-shrink-0 h-8 w-5 rounded bg-white border border-[black] mr-3" />
+        <div>
+          <div className="font-semibold text-[#06044B] text-base mb-1">{option.label}</div>
+          <div className="text-xs text-[#A0A0AF]">{option.sub}</div>
         </div>
+      </button>
+    );
+  })}
+</div>
       </div>
     )}
     {activePaperTab === "type" && (
       <div>
-        <div className="flex flex-col gap-4">
-          {/* Standard Paper */}
-          <button
-            onClick={() => setSelectedPaperType("Standard Paper")}
-            className={`flex justify-between items-center p-4 rounded-xl border transition-colors
-              ${selectedPaperType === "Standard Paper"
-                ? 'border-[#3ae180] bg-[#effdf3]'
-                : 'border-[#e6e6ed] bg-[#F4F7FA] hover:border-[#3ae180]'
-              }`}
-          >
-            <div>
-              <div className="font-medium text-[#06044B]">Standard Paper (80 GSM)</div>
-              <div className="text-xs text-[#A0A0AF]">Regular office paper</div>
-            </div>
-          </button>
-          {/* Premium Paper */}
-          <button
-            onClick={() => setSelectedPaperType("Premium Paper")}
-            className={`flex justify-between items-center p-4 rounded-xl border transition-colors
-              ${selectedPaperType === "Premium Paper"
-                ? 'border-[#3ae180] bg-[#effdf3]'
-                : 'border-[#e6e6ed] bg-[#F4F7FA] hover:border-[#3ae180]'
-              }`}
-          >
-            <div>
-              <div className="font-medium text-[#06044B]">Premium Paper (100 GSM)</div>
-              <div className="text-xs text-[#A0A0AF]">High-quality white paper</div>
-            </div>
-            <span className="text-xs text-[#EE943A] font-semibold">+ ₹5</span>
-          </button>
-          {/* Photo Paper */}
-          <button
-            onClick={() => setSelectedPaperType("Photo Paper")}
-            className={`flex justify-between items-center p-4 rounded-xl border transition-colors
-              ${selectedPaperType === "Photo Paper"
-                ? 'border-[#3ae180] bg-[#effdf3]'
-                : 'border-[#e6e6ed] bg-[#F4F7FA] hover:border-[#3ae180]'
-              }`}
-          >
-            <div>
-              <div className="font-medium text-[#06044B]">Photo Paper (200 GSM)</div>
-              <div className="text-xs text-[#A0A0AF]">Glossy photo paper</div>
-            </div>
-            <span className="text-xs text-[#EE943A] font-semibold">+ ₹10</span>
-          </button>
-          {/* Card Stock */}
-          <button
-            onClick={() => setSelectedPaperType("Card Stock")}
-            className={`flex flex-col border rounded-xl p-4 text-left transition-colors
-              ${selectedPaperType === "Card Stock"
-                ? 'border-[#3ae180] bg-[#effdf3]'
-                : 'border-[#e6e6ed] bg-[#F4F7FA] hover:border-[#3ae180]'
-              }`}
-          >
-            <div>
-              <div className="font-medium text-[#06044B]">Card Stock (250 GSM)</div>
-              <div className="text-xs text-[#A0A0AF]">Thick card paper</div>
-            </div>
-            <span className="text-xs text-[#EE943A] font-semibold">+ ₹22</span>
-          </button>
-        </div>
+<div className="grid grid-cols-3 gap-4">
+  {/* Standard Paper */}
+  <button
+    type="button"
+    onClick={() => setSelectedPaperType("Standard Paper")}
+    className={`
+      flex flex-col justify-between h-full p-4 rounded-xl border-2 transition-colors
+      shadow-sm text-left
+      ${selectedPaperType === "Standard Paper"
+        ? "border-[#3ae180] bg-[#effdf3]"
+        : "border-[#E6E6ED] bg-[#F4F7FA] hover:border-[#3ae180]"}
+    `}
+  >
+    <span className="font-semibold text-[#06044B] mb-1">Standard Paper (80 GSM)</span>
+    <span className="text-xs text-[#A0A0AF]">Regular office paper</span>
+  </button>
+
+  {/* Premium Paper */}
+  <button
+    type="button"
+    onClick={() => setSelectedPaperType("Premium Paper")}
+    className={`
+      flex flex-col justify-between h-full p-4 rounded-xl border-2 transition-colors
+      shadow-sm text-left
+      ${selectedPaperType === "Premium Paper"
+        ? "border-[#3ae180] bg-[#effdf3]"
+        : "border-[#E6E6ED] bg-[#F4F7FA] hover:border-[#3ae180]"}
+    `}
+  >
+    <div className="flex items-center justify-between">
+      <span className="font-semibold text-[#06044B] mb-1">Premium Paper (100 GSM)</span>
+      <span className="text-xs text-[#EE943A] font-semibold ml-3">+ ₹5</span>
+    </div>
+    <span className="text-xs text-[#A0A0AF]">High-quality white paper</span>
+  </button>
+
+  {/* Photo Paper */}
+  <button
+    type="button"
+    onClick={() => setSelectedPaperType("Photo Paper")}
+    className={`
+      flex flex-col justify-between h-full p-4 rounded-xl border-2 transition-colors
+      shadow-sm text-left
+      ${selectedPaperType === "Photo Paper"
+        ? "border-[#3ae180] bg-[#effdf3]"
+        : "border-[#E6E6ED] bg-[#F4F7FA] hover:border-[#3ae180]"}
+    `}
+  >
+    <div className="flex items-center justify-between">
+      <span className="font-semibold text-[#06044B] mb-1">Photo Paper (200 GSM)</span>
+      <span className="text-xs text-[#EE943A] font-semibold ml-3">+ ₹10</span>
+    </div>
+    <span className="text-xs text-[#A0A0AF]">Glossy photo paper</span>
+  </button>
+
+  {/* Card Stock */}
+  <button
+    type="button"
+    onClick={() => setSelectedPaperType("Card Stock")}
+    className={`
+      flex flex-col justify-between h-full p-4 rounded-xl border-2 transition-colors
+      shadow-sm text-left
+      ${selectedPaperType === "Card Stock"
+        ? "border-[#3ae180] bg-[#effdf3]"
+        : "border-[#E6E6ED] bg-[#F4F7FA] hover:border-[#3ae180]"}
+    `}
+  >
+    <div className="flex items-center justify-between">
+      <span className="font-semibold text-[#06044B] mb-1">Card Stock (250 GSM)</span>
+      <span className="text-xs text-[#EE943A] font-semibold ml-3">+ ₹22</span>
+    </div>
+    <span className="text-xs text-[#A0A0AF]">Thick card paper</span>
+  </button>
+</div>
       </div>
     )}
   </div>
