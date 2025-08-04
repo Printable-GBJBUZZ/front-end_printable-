@@ -19,6 +19,12 @@ export interface SignData {
   position: { x: number; y: number; pageIndex: number | null };
 }
 
+export async function getPdfPageCount(file: File): Promise<number> {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdfDoc = await PDFDocument.load(arrayBuffer);
+  return pdfDoc.getPageCount();
+}
+
 export const drawSignatureOnPdf = async (
   pdfData: ArrayBuffer,
   signs: SignData[],

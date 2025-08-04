@@ -19,6 +19,7 @@ export interface DocumentItem {
   id: string;
   size: number;
   uploading?: boolean;
+  pages?: number;
   error?: string;
 }
 
@@ -40,7 +41,7 @@ export interface Order {
 type Action =
   | { type: "SET_ORDER"; payload: Order }
   | { type: "ADD_DOCUMENT"; payload: DocumentItem }
-  | { type: "REMOVE_DOCUMENT"; index: number }
+  | { type: "REMOVE_DOCUMENT"; payload: { index: number } }
   | { type: "UPDATE_DOCUMENT"; index: number; payload: DocumentItem }
   | {
       type: "UPDATE_FIELD";
@@ -70,10 +71,11 @@ function orderReducer(state: Order, action: Action): Order {
     case "ADD_DOCUMENT":
       return { ...state, documents: [...state.documents, action.payload] };
     case "REMOVE_DOCUMENT":
-      return {
-        ...state,
-        documents: state.documents.filter((_, i) => i !== action.index),
-      };
+  return {
+    ...state,
+    documents: state.documents.filter((_, i) => i !== action.payload.index),
+  };
+
     case "UPDATE_DOCUMENT":
       return {
         ...state,
