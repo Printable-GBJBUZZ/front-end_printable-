@@ -75,40 +75,92 @@ export default function Component() {
     paperMargin: "Normal",
   });
 
+  // const handleFileUpload = useCallback(
+  //   async (files: FileList) => {
+  //     setUploadingFiles(true);
+  //     try {
+  //       for (let i = 0; i < files.length; i++) {
+  //         const file = files[i];
+
+  //         let pageCount = 1;
+  //         if (file.type === "application/pdf") {
+  //           try {
+  //             const arrayBuffer = await file.arrayBuffer();
+  //             const pdfDoc = await PDFDocument.load(arrayBuffer);
+  //             pageCount = pdfDoc.getPageCount();
+  //           } catch (err) {
+  //             console.error("Failed to read PDF page count:", err);
+  //           }
+  //         }
+
+  //         const fileWithMeta = {
+  //           id: uuidv4(),
+  //           name: file.name,
+  //           size: file.size,
+  //           type: file.type,
+  //           pages: pageCount,
+  //         };
+
+  //         await uploadFile(file, fileWithMeta); // Ensure uploadFile supports 2 args
+  //       }
+  //     } finally {
+  //       setUploadingFiles(false);
+  //     }
+  //   },
+  //   [uploadFile]
+  // );
+
+  // updated file code , we can use directly with fileWithmeta if needed else update the argument method to take two arguments 
+  // if this code shows error : you can comment out and use upper code 
+
   const handleFileUpload = useCallback(
-    async (files: FileList) => {
-      setUploadingFiles(true);
-      try {
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
+  async (files: FileList) => {
+    setUploadingFiles(true);
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
 
-          let pageCount = 1;
-          if (file.type === "application/pdf") {
-            try {
-              const arrayBuffer = await file.arrayBuffer();
-              const pdfDoc = await PDFDocument.load(arrayBuffer);
-              pageCount = pdfDoc.getPageCount();
-            } catch (err) {
-              console.error("Failed to read PDF page count:", err);
-            }
+        let pageCount = 1;
+        if (file.type === "application/pdf") {
+          try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdfDoc = await PDFDocument.load(arrayBuffer);
+            pageCount = pdfDoc.getPageCount();
+          } catch (err) {
+            console.error("Failed to read PDF page count:", err);
           }
-
-          const fileWithMeta = {
-            id: uuidv4(),
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            pages: pageCount,
-          };
-
-          await uploadFile(file, fileWithMeta); // Ensure uploadFile supports 2 args
         }
-      } finally {
-        setUploadingFiles(false);
+
+        const fileWithMeta: DocumentItem = {
+          id: uuidv4(),
+          fileName: file.name,
+          fileUrl: "", // You can update after actual upload
+          size: file.size,
+          copies: 1,
+          pages: pageCount,
+          colorType: "black and white",
+          paperSize: "A4 (8.27 x 11.69 inches)",
+          paperType: "Standard Paper",
+          bindingType: "No Binding",
+          laminationType: "No Laminations",
+          coverType: "No Cover",
+          confidentialPrint: false,
+          fileReview: false,
+          rushOrder: false,
+          printType: "front",
+          pageDirection: "vertical",
+          pagesToPrint: "All",
+        };
+
+        await uploadFile(file, fileWithMeta); // Or just uploadFile(fileWithMeta) depending on your method
       }
-    },
-    [uploadFile]
-  );
+    } finally {
+      setUploadingFiles(false);
+    }
+  },
+  [uploadFile]
+);
+
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {

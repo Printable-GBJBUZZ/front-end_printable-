@@ -12,7 +12,27 @@ export interface DocumentItem {
   paperSize:
     | "Letter (8.5 x 11 inches)"
     | "A4 (8.27 x 11.69 inches)"
-    | "Legal (8.5 x 14 inches)";
+    | "Legal (8.5 x 14 inches)"
+    | "A3"
+    | "Tabloid"
+    | "Statement"
+    | "A5";
+  paperType: "Standard Paper" | "Premium Paper" | "Photo Paper" | "Card Stock";
+  bindingType:
+    | "No Binding"
+    | "Staple Binding"
+    | "Spiral Binding"
+    | "Comb Binding"
+    | "Perfect Binding";
+  laminationType: "No Laminations" | "Matte Lamination" | "Gloss Lamination";
+  coverType:
+    | "No Cover"
+    | "Clear Front Cover"
+    | "Colored Back Cover"
+    | "Front & Back Covers";
+  confidentialPrint: boolean;
+  fileReview: boolean;
+  rushOrder: boolean;
   printType: "front" | "front and back";
   pageDirection: "vertical" | "horizontal";
   pagesToPrint: "All" | string;
@@ -22,6 +42,7 @@ export interface DocumentItem {
   pages?: number;
   error?: string;
 }
+
 
 export interface Order {
   userId: string;
