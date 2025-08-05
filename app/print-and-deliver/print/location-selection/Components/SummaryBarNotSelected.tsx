@@ -2,6 +2,7 @@ import TotalFilesIcon from "@/public/Print&Deliver/TotalFilesIcon";
 import { Button } from "@/components/ui/button";
 import { getTotalDocument } from "../../TotalDocument";
 import { Order } from "@/context/orderContext";
+import getTotalPages from "../../TotalPages";
 
 interface SummaryBarNotSelectedProps {
   order: Order;
@@ -20,7 +21,7 @@ export default function SummaryBarNotSelected({
         <div className="flex items-center space-x-[20px]">
           <TotalFilesIcon />
           <span className="text-[14px] font-medium text-[#555555]">
-            Total {getTotalDocument(order.documents)} Items
+            Total {getTotalDocument(order.documents)} Items ({getTotalPages(order)} Pages)
           </span>
         </div>
         <Button

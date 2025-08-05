@@ -12,15 +12,37 @@ export interface DocumentItem {
   paperSize:
     | "Letter (8.5 x 11 inches)"
     | "A4 (8.27 x 11.69 inches)"
-    | "Legal (8.5 x 14 inches)";
+    | "Legal (8.5 x 14 inches)"
+    | "A3"
+    | "Tabloid"
+    | "Statement"
+    | "A5";
+  paperType: "Standard Paper" | "Premium Paper" | "Photo Paper" | "Card Stock";
+  bindingType:
+    | "No Binding"
+    | "Staple Binding"
+    | "Spiral Binding"
+    | "Comb Binding"
+    | "Perfect Binding";
+  laminationType: "No Laminations" | "Matte Lamination" | "Gloss Lamination";
+  coverType:
+    | "No Cover"
+    | "Clear Front Cover"
+    | "Colored Back Cover"
+    | "Front & Back Covers";
+  confidentialPrint: boolean;
+  fileReview: boolean;
+  rushOrder: boolean;
   printType: "front" | "front and back";
   pageDirection: "vertical" | "horizontal";
   pagesToPrint: "All" | string;
   id: string;
   size: number;
   uploading?: boolean;
+  pages?: number;
   error?: string;
 }
+
 
 export interface Order {
   userId: string;
@@ -40,7 +62,7 @@ export interface Order {
 type Action =
   | { type: "SET_ORDER"; payload: Order }
   | { type: "ADD_DOCUMENT"; payload: DocumentItem }
-  | { type: "REMOVE_DOCUMENT"; index: number }
+  | { type: "REMOVE_DOCUMENT"; payload: { index: number } }
   | { type: "UPDATE_DOCUMENT"; index: number; payload: DocumentItem }
   | {
       type: "UPDATE_FIELD";
@@ -70,10 +92,11 @@ function orderReducer(state: Order, action: Action): Order {
     case "ADD_DOCUMENT":
       return { ...state, documents: [...state.documents, action.payload] };
     case "REMOVE_DOCUMENT":
-      return {
-        ...state,
-        documents: state.documents.filter((_, i) => i !== action.index),
-      };
+  return {
+    ...state,
+    documents: state.documents.filter((_, i) => i !== action.payload.index),
+  };
+
     case "UPDATE_DOCUMENT":
       return {
         ...state,

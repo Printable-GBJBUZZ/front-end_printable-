@@ -3,6 +3,7 @@ import TotalFilesIcon from "@/public/Print&Deliver/TotalFilesIcon";
 import { getTotalDocument } from "../../TotalDocument";
 import { Button } from "@/components/ui/button";
 import { Order } from "@/context/orderContext";
+import getTotalPages from "../../TotalPages";
 
 interface SummaryBarSelectedProps {
   idx: number;
@@ -34,7 +35,7 @@ export default function SummaryBarSelected({
       <div className="flex items-center space-x-[20px]">
         <TotalFilesIcon />
         <span className="text-[14px] font-medium text-[#555555]">
-          Total {getTotalDocument(order.documents)} Items
+          Total {getTotalDocument(order.documents)} Items ({getTotalPages(order)} Pages)
         </span>
       </div>
       <Button
