@@ -1,12 +1,13 @@
 import Home from "@/public/Print&Deliver/Home";
 import Printer from "@/public/Print&Deliver/Printer";
+import { Order } from "@/context/orderContext";
 
 interface MerchantImageProps {
   src: string;
   alt?: string;
   googleDistance?: string;
   duration?: string;
-  deliveryType?: "Home Delivery" | "Pick Up";
+  order: Order
 }
 
 export default function MerchantImage({
@@ -14,7 +15,7 @@ export default function MerchantImage({
   alt,
   googleDistance,
   duration,
-  deliveryType,
+  order,
 }: MerchantImageProps) {
   return (
     <div
@@ -26,10 +27,10 @@ export default function MerchantImage({
       role="img"
     >
       {/* Top left: delivery type (only for Home Delivery) */}
-      {deliveryType === "Home Delivery" && (
+      {order.fulfillmentType === "Home Delivery" && (
         <div className="absolute top-2 left-42 bg-[#007AFF] bg-opacity-80 text-[12px] text-white font-semibold px-3 py-1 rounded-full shadow flex flex-row items-center">
           <Home />
-          <div className="ml-[5px]">{deliveryType}</div>
+          <div className="ml-[5px]">{order.fulfillmentType}</div>
         </div>
       )}
 

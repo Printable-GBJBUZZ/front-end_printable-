@@ -1047,7 +1047,7 @@ export default function LocationSelectionPage() {
                                     alt={merchant.shopName}
                                     googleDistance={merchant.googleDistance}
                                     duration={merchant.duration}
-                                    deliveryType="Pick Up" // or "Home Delivery" if appropriate
+                                    order= {order}
                                   />
                                 </div>
                                 <div className="pt-4">

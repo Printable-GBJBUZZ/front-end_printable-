@@ -11,13 +11,6 @@ interface CartPanelProps {
   isOpen: boolean;
   order: Order;
   onClose: () => void;
-  cartItems: Array<{
-    id: number;
-    name: string;
-    description: string;
-    copies: number;
-    price: number;
-  }>;
   onChangeStore?: () => void;
   selectedMerchant?: string | null;
   merchants?: Array<{
@@ -31,7 +24,6 @@ export default function CartPanel({
   isOpen,
   order,
   onClose,
-  cartItems,
   onChangeStore,
   selectedMerchant,
   merchants = [],
