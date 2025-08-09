@@ -68,8 +68,8 @@ export default function Component() {
   // Global settings for "apply to all"
   const [globalSettings, setGlobalSettings] = useState({
     copies: 1,
-    colorType: "black and white" as "black and white" | "color",
-    pageDirection: "vertical" as "vertical" | "horizontal",
+    colorType: "Black and White" as "Black and White" | "Color",
+    pageDirection: "Vertical" as "Vertical" | "Horizontal",
     paperSize: "A4 (8.27 x 11.69 inches)" as DocumentItem["paperSize"],
     printType: "front" as "front" | "front and back",
     pagesToPrint: "All",
@@ -139,7 +139,7 @@ export default function Component() {
           size: file.size,
           copies: 1,
           pages: pageCount,
-          colorType: "black and white",
+          colorType: "Black and White",
           paperSize: "A4 (8.27 x 11.69 inches)",
           paperType: "Standard Paper",
           bindingType: "No Binding",
@@ -149,7 +149,7 @@ export default function Component() {
           fileReview: false,
           rushOrder: false,
           printType: "front",
-          pageDirection: "vertical",
+          pageDirection: "Vertical",
           pagesToPrint: "All",
         };
 
@@ -516,7 +516,7 @@ export default function Component() {
                         ? updateGlobalSetting("colorType", "black and white")
                         : order.documents[selectedDocumentIndex] &&
                           updateDocument(selectedDocumentIndex, {
-                            colorType: "black and white",
+                            colorType: "Black and White",
                           })
                     }
                     className={`flex items-center w-64 p-4 rounded-lg border transition-colors
@@ -524,7 +524,7 @@ export default function Component() {
             (applyToAll
               ? globalSettings.colorType
               : order.documents[selectedDocumentIndex]?.colorType) ===
-            "black and white"
+            "Black and White"
               ? "border-[#3ae180] bg-[#effdf3]"
               : "border-[#e6e6ed] bg-white hover:border-[#c9c9c9]"
           }`}
@@ -551,14 +551,14 @@ export default function Component() {
                         ? updateGlobalSetting("colorType", "color")
                         : order.documents[selectedDocumentIndex] &&
                           updateDocument(selectedDocumentIndex, {
-                            colorType: "color",
+                            colorType: "Color",
                           })
                     }
                     className={`flex items-center w-64 p-4 rounded-lg border transition-colors
           ${
             (applyToAll
               ? globalSettings.colorType
-              : order.documents[selectedDocumentIndex]?.colorType) === "color"
+              : order.documents[selectedDocumentIndex]?.colorType) === "Color"
               ? "border-[#3ae180] bg-[#effdf3]"
               : "border-[#e6e6ed] bg-white hover:border-[#c9c9c9]"
           }`}
@@ -599,16 +599,16 @@ export default function Component() {
                         updateGlobalSetting("pageDirection", "horizontal");
                       } else if (order.documents[selectedDocumentIndex]) {
                         updateDocument(selectedDocumentIndex, {
-                          pageDirection: "horizontal",
+                          pageDirection: "Horizontal",
                         });
                       }
                     }}
                     className={`flex flex-col items-center p-3 rounded-lg border-2 transition-colors ${
                       (
                         applyToAll
-                          ? globalSettings.pageDirection === "horizontal"
+                          ? globalSettings.pageDirection === "Horizontal"
                           : order.documents[selectedDocumentIndex]
-                              ?.pageDirection === "horizontal"
+                              ?.pageDirection === "Horizontal"
                       )
                         ? "border-[#3ae180] bg-[#dffbe7]"
                         : "border-[#c9c9c9] bg-white"
@@ -624,16 +624,16 @@ export default function Component() {
                         updateGlobalSetting("pageDirection", "vertical");
                       } else if (order.documents[selectedDocumentIndex]) {
                         updateDocument(selectedDocumentIndex, {
-                          pageDirection: "vertical",
+                          pageDirection: "Vertical",
                         });
                       }
                     }}
                     className={`flex flex-col items-center p-3 rounded-lg border-2 transition-colors ${
                       (
                         applyToAll
-                          ? globalSettings.pageDirection === "vertical"
+                          ? globalSettings.pageDirection === "Vertical"
                           : order.documents[selectedDocumentIndex]
-                              ?.pageDirection === "vertical"
+                              ?.pageDirection === "Vertical"
                       )
                         ? "border-[#3ae180] bg-[#dffbe7]"
                         : "border-[#c9c9c9] bg-white"

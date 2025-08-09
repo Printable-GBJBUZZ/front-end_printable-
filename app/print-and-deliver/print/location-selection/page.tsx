@@ -942,7 +942,6 @@ export default function LocationSelectionPage() {
         isOpen={isCartOpen}
         order={order}
         onClose={() => setIsCartOpen(false)}
-        cartItems={cartItems}
         onChangeStore={() => {
           setIsCartOpen(false);
           setSelectedMerchant(null);

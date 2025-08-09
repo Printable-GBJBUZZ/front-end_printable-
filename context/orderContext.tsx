@@ -8,7 +8,7 @@ export interface DocumentItem {
   fileName: string;
   fileUrl: string;
   copies: number;
-  colorType: "black and white" | "color";
+  colorType: "Black and White" | "Color";
   paperSize:
     | "Letter (8.5 x 11 inches)"
     | "A4 (8.27 x 11.69 inches)"
@@ -34,7 +34,7 @@ export interface DocumentItem {
   fileReview: boolean;
   rushOrder: boolean;
   printType: "front" | "front and back";
-  pageDirection: "vertical" | "horizontal";
+  pageDirection: "Vertical" | "Horizontal";
   pagesToPrint: "All" | string;
   id: string;
   size: number;
@@ -43,12 +43,17 @@ export interface DocumentItem {
   error?: string;
 }
 
+export interface PriceBreakdownItem {
+  label: string;
+  unitPrice?: number;
+  quantity?: number;
+  total: number;
+}
 
 export interface Order {
   userId: string;
   merchantId: string;
   status: "declined" | "pending" | "accepted" | string;
-  totalAmount: number;
   paymentMethod: string;
   fulfillmentType: "takeaway" | "delivery" | string;
   state: string | null;
@@ -57,6 +62,7 @@ export interface Order {
   latitude: number | null;
   longitude: number | null;
   documents: DocumentItem[];
+  breakdown: PriceBreakdownItem[];
 }
 
 type Action =
@@ -74,7 +80,6 @@ const initialOrder: Order = {
   userId: "1",
   merchantId: "1",
   status: "pending",
-  totalAmount: 320,
   paymentMethod: "Credit Card",
   fulfillmentType: "takeaway",
   state: null,
@@ -83,6 +88,7 @@ const initialOrder: Order = {
   latitude: null,
   longitude: null,
   documents: [],
+  breakdown: [],
 };
 
 function orderReducer(state: Order, action: Action): Order {
