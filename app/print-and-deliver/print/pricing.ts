@@ -15,19 +15,7 @@ export function calculatePriceBreakdown(
 ): PriceBreakdownItem[] {
   const breakdown: PriceBreakdownItem[] = [];
 
-  // Debug: Log what's actually in the documents
-  console.log("Documents being processed:", JSON.stringify(documents, null, 2));
-
   documents.forEach((doc, index) => {
-    console.log(`Processing document ${index}:`, {
-      paperSize: doc.paperSize,
-      paperType: doc.paperType,
-      colorType: doc.colorType,
-      bindingType: doc.bindingType,
-      laminationType: doc.laminationType,
-      coverType: doc.coverType,
-      copies: doc.copies,
-    });
 
     // Normalized price maps (all lowercase)
     const paperSizePrices: Record<string, number> = {
@@ -81,15 +69,6 @@ export function calculatePriceBreakdown(
     const laminationKey = normalize(doc.laminationType);
     const coverKey = normalize(doc.coverType);
 
-    console.log(`Normalized keys for document ${index}:`, {
-      sizeKey,
-      typeKey,
-      colorKey,
-      bindingKey,
-      laminationKey,
-      coverKey,
-    });
-
     const copies = doc.copies && doc.copies > 0 ? doc.copies : 1;
 
     // Paper Size
@@ -101,13 +80,6 @@ export function calculatePriceBreakdown(
         quantity: copies,
         total: paperSizePrice * copies,
       });
-      console.log(
-        `Added Paper Size: ${paperSizePrice} * ${copies} = ${
-          paperSizePrice * copies
-        }`
-      );
-    } else {
-      console.log(`Paper Size not found for key: "${sizeKey}"`);
     }
 
     // Paper Type
@@ -119,13 +91,6 @@ export function calculatePriceBreakdown(
         quantity: copies,
         total: paperTypePrice * copies,
       });
-      console.log(
-        `Added Paper Type: ${paperTypePrice} * ${copies} = ${
-          paperTypePrice * copies
-        }`
-      );
-    } else {
-      console.log(`Paper Type not found for key: "${typeKey}"`);
     }
 
     // Color Type
@@ -137,11 +102,6 @@ export function calculatePriceBreakdown(
         quantity: copies,
         total: colorPrice * copies,
       });
-      console.log(
-        `Added Color: ${colorPrice} * ${copies} = ${colorPrice * copies}`
-      );
-    } else {
-      console.log(`Color Type not found for key: "${colorKey}"`);
     }
 
     // Binding (only if price > 0)
@@ -153,11 +113,6 @@ export function calculatePriceBreakdown(
         quantity: 1,
         total: bindingPrice,
       });
-      console.log(`Added Binding: ${bindingPrice}`);
-    } else {
-      console.log(
-        `Binding not added. Price: ${bindingPrice}, Key: "${bindingKey}"`
-      );
     }
 
     // Lamination (only if price > 0)
@@ -169,15 +124,6 @@ export function calculatePriceBreakdown(
         quantity: copies,
         total: laminationPrice * copies,
       });
-      console.log(
-        `Added Lamination: ${laminationPrice} * ${copies} = ${
-          laminationPrice * copies
-        }`
-      );
-    } else {
-      console.log(
-        `Lamination not added. Price: ${laminationPrice}, Key: "${laminationKey}"`
-      );
     }
 
     // Cover (only if price > 0)
@@ -189,9 +135,6 @@ export function calculatePriceBreakdown(
         quantity: 1,
         total: coverPrice,
       });
-      console.log(`Added Cover: ${coverPrice}`);
-    } else {
-      console.log(`Cover not added. Price: ${coverPrice}, Key: "${coverKey}"`);
     }
 
     // Confidential Print
@@ -202,7 +145,6 @@ export function calculatePriceBreakdown(
         quantity: 1,
         total: 10,
       });
-      console.log(`Added Confidential Print: 10`);
     }
 
     // Rush Order
@@ -213,11 +155,9 @@ export function calculatePriceBreakdown(
         quantity: 1,
         total: 20,
       });
-      console.log(`Added Rush Order: 20`);
     }
   });
 
-  console.log("Final breakdown:", breakdown);
   return breakdown;
 }
 
@@ -278,7 +218,6 @@ export function calculateOrderTotals(order: Order) {
   // Final total
   const total = subtotal + deliveryCharges + tax - discount;
 
-  console.log("Category totals:", categoryTotals);
 
   return {
     breakdown,
