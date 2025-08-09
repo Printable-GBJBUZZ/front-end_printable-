@@ -115,8 +115,7 @@ export default function Component() {
   // updated file code , we can use directly with fileWithmeta if needed else update the argument method to take two arguments 
   // if this code shows error : you can comment out and use upper code 
 
-  const handleFileUpload = useCallback(
-  async (files: FileList) => {
+  const handleFileUpload = useCallback(async (files: FileList) => {
     setUploadingFiles(true);
     try {
       for (let i = 0; i < files.length; i++) {
@@ -136,7 +135,7 @@ export default function Component() {
         const fileWithMeta: DocumentItem = {
           id: uuidv4(),
           fileName: file.name,
-          fileUrl: "", // You can update after actual upload
+          fileUrl: "",
           size: file.size,
           copies: 1,
           pages: pageCount,
@@ -153,16 +152,39 @@ export default function Component() {
           pageDirection: "vertical",
           pagesToPrint: "All",
         };
-              //ERROR
-        // await uploadFile(file, fileWithMeta); // Or just uploadFile(fileWithMeta) depending on your method
-        await uploadFile(file);
+
+        // 🔹 Log exactly what’s going to be sent
+        console.log("Preparing to upload:", { file, fileWithMeta });
+
+        try {
+          // 🔹 Ensure FormData is used for file uploads
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("meta", JSON.stringify(fileWithMeta));
+
+          //fix exact 
+          const res = await fetch("http://localhost:5000/api/file/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(`Server error ${res.status}: ${errText}`);
+          }
+
+          console.log("File uploaded successfully:", file.name);
+        } catch (err) {
+          console.error(`Upload failed for ${file.name}:`, err);
+        }
       }
+    } catch (err) {
+      console.error("General upload error:", err);
     } finally {
       setUploadingFiles(false);
     }
-  },
-  [uploadFile]
-);
+  }, []);
+
 
 
   const handleDrop = useCallback(
