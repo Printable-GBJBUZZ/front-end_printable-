@@ -5,6 +5,7 @@ import { getTotalDocument } from "../../TotalDocument";
 import { Order } from "@/context/orderContext";
 import { calculateOrderTotals } from "../../pricing";
 import MerchantImage from "./MerchantImage";
+import Link from "next/link";
 
 
 interface CartPanelProps {
@@ -193,9 +194,12 @@ export default function CartPanel({
                   ₹{total.toFixed(2)}
                 </div>
               </div>
-              <div className="text-[20px] text-white cursor-pointer">
+              <Link
+                href="/print-and-deliver/print/review-and-pay"
+                className="text-[20px] text-white cursor-pointer"
+              >
                 Proceed to Pay
-              </div>
+              </Link>
             </div>
           </div>
         </div>
