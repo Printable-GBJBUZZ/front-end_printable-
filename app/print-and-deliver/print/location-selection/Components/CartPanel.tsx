@@ -6,6 +6,7 @@ import { Order } from "@/context/orderContext";
 import { calculateOrderTotals } from "../../pricing";
 import MerchantImage from "./MerchantImage";
 
+
 interface CartPanelProps {
   isOpen: boolean;
   order: Order;
@@ -30,7 +31,7 @@ export default function CartPanel({
 }: CartPanelProps) {
   if (!isOpen) return null;
 
-  const { subtotal, deliveryCharges, tax, discount, total } =
+  const { subtotal, deliveryCharges, tax, discount, total, categoryTotals } =
     calculateOrderTotals(order);
 
   // ---- Selected Merchant ----
@@ -116,22 +117,52 @@ export default function CartPanel({
           {/* Bill Summary Inline */}
           <div className="w-[410px] bg-white mt-[24px] rounded-[12px] p-[16px]">
             <h3 className="text-lg font-semibold mb-4">Bill Summary</h3>
+
+            {/* Category totals */}
+            {[
+              "Paper",
+              "Color",
+              "Binding",
+              "Lamination",
+              "Cover",
+              "Confidential Print",
+              "Rush Order",
+            ]
+              .filter((key) => (categoryTotals[key] ?? 0) > 0)
+              .map((key) => (
+                <div key={key} className="flex justify-between text-sm mb-2">
+                  <span>{key}</span>
+                  <span>₹{(categoryTotals[key] ?? 0).toFixed(2)}</span>
+                </div>
+              ))}
+
+            {/* Subtotal */}
             <div className="flex justify-between text-sm mb-2">
               <span>Subtotal</span>
               <span>₹{subtotal.toFixed(2)}</span>
             </div>
+
+            {/* Delivery Charges */}
             <div className="flex justify-between text-sm mb-2">
               <span>Delivery Charges</span>
               <span>₹{deliveryCharges.toFixed(2)}</span>
             </div>
+
+            {/* Tax */}
             <div className="flex justify-between text-sm mb-2">
               <span>Tax (8%)</span>
               <span>₹{tax.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-sm mb-2 text-green-600">
-              <span>Discount</span>
-              <span>-₹{discount.toFixed(2)}</span>
-            </div>
+
+            {/* Discount */}
+            {discount > 0 && (
+              <div className="flex justify-between text-sm mb-2 text-green-600">
+                <span>Discount</span>
+                <span>-₹{discount.toFixed(2)}</span>
+              </div>
+            )}
+
+            {/* Final Total */}
             <div className="flex justify-between text-base font-bold border-t pt-2">
               <span>Total</span>
               <span>₹{total.toFixed(2)}</span>

@@ -77,115 +77,83 @@ export default function Component() {
     paperMargin: "Normal",
   });
 
-  // const handleFileUpload = useCallback(
-  //   async (files: FileList) => {
-  //     setUploadingFiles(true);
-  //     try {
-  //       for (let i = 0; i < files.length; i++) {
-  //         const file = files[i];
+  const handleFileUpload = useCallback(
+    async (files: FileList) => {
+      setUploadingFiles(true);
+      try {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
 
-  //         let pageCount = 1;
-  //         if (file.type === "application/pdf") {
-  //           try {
-  //             const arrayBuffer = await file.arrayBuffer();
-  //             const pdfDoc = await PDFDocument.load(arrayBuffer);
-  //             pageCount = pdfDoc.getPageCount();
-  //           } catch (err) {
-  //             console.error("Failed to read PDF page count:", err);
-  //           }
-  //         }
+          let pageCount = 1;
+          if (file.type === "application/pdf") {
+            try {
+              const arrayBuffer = await file.arrayBuffer();
+              const pdfDoc = await PDFDocument.load(arrayBuffer);
+              pageCount = pdfDoc.getPageCount();
+            } catch (err) {
+              console.error("Failed to read PDF page count:", err);
+            }
+          }
 
-  //         const fileWithMeta = {
-  //           id: uuidv4(),
-  //           name: file.name,
-  //           size: file.size,
-  //           type: file.type,
-  //           pages: pageCount,
-  //         };
+          const fileWithMeta: DocumentItem = {
+            id: uuidv4(),
+            fileName: file.name,
+            fileUrl: "",
+            size: file.size,
+            copies: 1,
+            pages: pageCount,
+            colorType: "Black and White",
+            paperSize: "A4 (8.27 x 11.69 inches)",
+            paperType: "Standard Paper",
+            bindingType: "No Binding",
+            laminationType: "No Laminations",
+            coverType: "No Cover",
+            confidentialPrint: false,
+            fileReview: false,
+            rushOrder: false,
+            printType: "front",
+            pageDirection: "Vertical",
+            pagesToPrint: "All",
+          };
 
-  //         await uploadFile(file, fileWithMeta); // Ensure uploadFile supports 2 args
-  //       }
-  //     } finally {
-  //       setUploadingFiles(false);
-  //     }
-  //   },
-  //   [uploadFile]
-  // );
+          console.log("Preparing to upload:", { file, fileWithMeta });
 
-  // updated file code , we can use directly with fileWithmeta if needed else update the argument method to take two arguments 
-  // if this code shows error : you can comment out and use upper code 
-
-  const handleFileUpload = useCallback(async (files: FileList) => {
-    setUploadingFiles(true);
-    try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-
-        let pageCount = 1;
-        if (file.type === "application/pdf") {
           try {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdfDoc = await PDFDocument.load(arrayBuffer);
-            pageCount = pdfDoc.getPageCount();
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("meta", JSON.stringify(fileWithMeta));
+
+            const res = await fetch("http://localhost:5000/api/file/upload", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!res.ok) {
+              const errText = await res.text();
+              throw new Error(`Server error ${res.status}: ${errText}`);
+            }
+
+            // CRITICAL FIX: Add document to order context after successful upload
+            dispatch({ type: "ADD_DOCUMENT", payload: fileWithMeta });
+
+            console.log("File uploaded and added to order:", file.name);
           } catch (err) {
-            console.error("Failed to read PDF page count:", err);
+            console.error(`Upload failed for ${file.name}:`, err);
+            // Still add to context even if upload fails for testing
+            dispatch({
+              type: "ADD_DOCUMENT",
+              payload: { ...fileWithMeta, error: `Upload failed: ${err}` },
+            });
           }
         }
-
-        const fileWithMeta: DocumentItem = {
-          id: uuidv4(),
-          fileName: file.name,
-          fileUrl: "",
-          size: file.size,
-          copies: 1,
-          pages: pageCount,
-          colorType: "Black and White",
-          paperSize: "A4 (8.27 x 11.69 inches)",
-          paperType: "Standard Paper",
-          bindingType: "No Binding",
-          laminationType: "No Laminations",
-          coverType: "No Cover",
-          confidentialPrint: false,
-          fileReview: false,
-          rushOrder: false,
-          printType: "front",
-          pageDirection: "Vertical",
-          pagesToPrint: "All",
-        };
-
-        // 🔹 Log exactly what’s going to be sent
-        console.log("Preparing to upload:", { file, fileWithMeta });
-
-        try {
-          // 🔹 Ensure FormData is used for file uploads
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("meta", JSON.stringify(fileWithMeta));
-
-          //fix exact 
-          const res = await fetch("http://localhost:5000/api/file/upload", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (!res.ok) {
-            const errText = await res.text();
-            throw new Error(`Server error ${res.status}: ${errText}`);
-          }
-
-          console.log("File uploaded successfully:", file.name);
-        } catch (err) {
-          console.error(`Upload failed for ${file.name}:`, err);
-        }
+      } catch (err) {
+        console.error("General upload error:", err);
+      } finally {
+        setUploadingFiles(false);
       }
-    } catch (err) {
-      console.error("General upload error:", err);
-    } finally {
-      setUploadingFiles(false);
-    }
-  }, []);
-
-
+    },
+    [dispatch]
+  );
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -256,6 +224,110 @@ export default function Component() {
         });
         setSelectedDocumentIndex(0);
       }
+    }
+  };
+
+  // CRITICAL FIX: Update binding selection to modify actual documents
+  const handleBindingChange = (bindingType: DocumentItem["bindingType"]) => {
+    setSelectedBinding(bindingType);
+
+    if (applyToAll) {
+      order.documents.forEach((_, index) => {
+        updateDocument(index, { bindingType });
+      });
+    } else if (order.documents[selectedDocumentIndex]) {
+      updateDocument(selectedDocumentIndex, { bindingType });
+    }
+  };
+
+  // CRITICAL FIX: Update lamination selection to modify actual documents
+  const handleLaminationChange = (
+    laminationType: DocumentItem["laminationType"]
+  ) => {
+    setSelectedLamination(laminationType);
+
+    if (applyToAll) {
+      order.documents.forEach((_, index) => {
+        updateDocument(index, { laminationType });
+      });
+    } else if (order.documents[selectedDocumentIndex]) {
+      updateDocument(selectedDocumentIndex, { laminationType });
+    }
+  };
+
+  // CRITICAL FIX: Update cover selection to modify actual documents
+  const handleCoverChange = (coverType: DocumentItem["coverType"]) => {
+    setSelectedCover(coverType);
+
+    if (applyToAll) {
+      order.documents.forEach((_, index) => {
+        updateDocument(index, { coverType });
+      });
+    } else if (order.documents[selectedDocumentIndex]) {
+      updateDocument(selectedDocumentIndex, { coverType });
+    }
+  };
+
+  // CRITICAL FIX: Update paper type selection to modify actual documents
+  const handlePaperTypeChange = (paperType: DocumentItem["paperType"]) => {
+    setSelectedPaperType(paperType);
+
+    if (applyToAll) {
+      order.documents.forEach((_, index) => {
+        updateDocument(index, { paperType });
+      });
+    } else if (order.documents[selectedDocumentIndex]) {
+      updateDocument(selectedDocumentIndex, { paperType });
+    }
+  };
+
+  // CRITICAL FIX: Update paper size selection to modify actual documents
+  const handlePaperSizeChange = (paperSize: DocumentItem["paperSize"]) => {
+    setSelectedPaperSize(paperSize.split(" ")[0]); // For display
+
+    if (applyToAll) {
+      order.documents.forEach((_, index) => {
+        updateDocument(index, { paperSize });
+      });
+    } else if (order.documents[selectedDocumentIndex]) {
+      updateDocument(selectedDocumentIndex, { paperSize });
+    }
+  };
+
+  // CRITICAL FIX: Update checkbox options to modify actual documents
+  const handleConfidentialPrintChange = (checked: boolean) => {
+    setConfidentialPrintingChecked(checked);
+
+    if (applyToAll) {
+      order.documents.forEach((_, index) => {
+        updateDocument(index, { confidentialPrint: checked });
+      });
+    } else if (order.documents[selectedDocumentIndex]) {
+      updateDocument(selectedDocumentIndex, { confidentialPrint: checked });
+    }
+  };
+
+  const handleFileReviewChange = (checked: boolean) => {
+    setFileReviewChecked(checked);
+
+    if (applyToAll) {
+      order.documents.forEach((_, index) => {
+        updateDocument(index, { fileReview: checked });
+      });
+    } else if (order.documents[selectedDocumentIndex]) {
+      updateDocument(selectedDocumentIndex, { fileReview: checked });
+    }
+  };
+
+  const handleRushOrderChange = (checked: boolean) => {
+    setRushOrderChecked(checked);
+
+    if (applyToAll) {
+      order.documents.forEach((_, index) => {
+        updateDocument(index, { rushOrder: checked });
+      });
+    } else if (order.documents[selectedDocumentIndex]) {
+      updateDocument(selectedDocumentIndex, { rushOrder: checked });
     }
   };
 
@@ -513,7 +585,7 @@ export default function Component() {
                   <button
                     onClick={() =>
                       applyToAll
-                        ? updateGlobalSetting("colorType", "black and white")
+                        ? updateGlobalSetting("colorType", "Black and White")
                         : order.documents[selectedDocumentIndex] &&
                           updateDocument(selectedDocumentIndex, {
                             colorType: "Black and White",
@@ -548,7 +620,7 @@ export default function Component() {
                   <button
                     onClick={() =>
                       applyToAll
-                        ? updateGlobalSetting("colorType", "color")
+                        ? updateGlobalSetting("colorType", "Color")
                         : order.documents[selectedDocumentIndex] &&
                           updateDocument(selectedDocumentIndex, {
                             colorType: "Color",
@@ -596,7 +668,7 @@ export default function Component() {
                   <button
                     onClick={() => {
                       if (applyToAll) {
-                        updateGlobalSetting("pageDirection", "horizontal");
+                        updateGlobalSetting("pageDirection", "Horizontal");
                       } else if (order.documents[selectedDocumentIndex]) {
                         updateDocument(selectedDocumentIndex, {
                           pageDirection: "Horizontal",
@@ -621,7 +693,7 @@ export default function Component() {
                   <button
                     onClick={() => {
                       if (applyToAll) {
-                        updateGlobalSetting("pageDirection", "vertical");
+                        updateGlobalSetting("pageDirection", "Vertical");
                       } else if (order.documents[selectedDocumentIndex]) {
                         updateDocument(selectedDocumentIndex, {
                           pageDirection: "Vertical",
@@ -660,18 +732,13 @@ export default function Component() {
                   <input
                     type="checkbox"
                     checked={confidentialPrintingChecked}
-                    onChange={() =>
-                      setConfidentialPrintingChecked(
-                        !confidentialPrintingChecked
-                      )
+                    onChange={(e) =>
+                      handleConfidentialPrintChange(e.target.checked)
                     }
                     className="w-5 h-5 accent-[#06044B] border-2 border-[#C9C9C9] rounded-md mr-4 transition-colors
         group-hover:border-[#06044B] group-checked:border-[#06044B]"
                   />
-                  <div
-                    className={`p-4 w-72 rounded-xl transition-all
-        `}
-                  >
+                  <div className="p-4 w-72 rounded-xl transition-all">
                     <div className="text-base font-medium text-[#06044B] mb-0.5">
                       Confidential Printing
                     </div>
@@ -686,13 +753,10 @@ export default function Component() {
                   <input
                     type="checkbox"
                     checked={fileReviewChecked}
-                    onChange={() => setFileReviewChecked(!fileReviewChecked)}
+                    onChange={(e) => handleFileReviewChange(e.target.checked)}
                     className="w-5 h-5 accent-[#06044B] border-2 border-[#C9C9C9] rounded-md mr-4 transition-colors"
                   />
-                  <div
-                    className={`p-4 w-72 rounded-xl transition-all
-            `}
-                  >
+                  <div className="p-4 w-72 rounded-xl transition-all">
                     <div className="text-base font-medium text-[#06044B] mb-0.5">
                       File Review Service
                     </div>
@@ -707,13 +771,10 @@ export default function Component() {
                   <input
                     type="checkbox"
                     checked={rushOrderChecked}
-                    onChange={() => setRushOrderChecked(!rushOrderChecked)}
+                    onChange={(e) => handleRushOrderChange(e.target.checked)}
                     className="w-5 h-5 accent-[#06044B] border-2 border-[#C9C9C9] rounded-md mr-4 transition-colors"
                   />
-                  <div
-                    className={`p-4 w-72 rounded-xl  transition-all
-            `}
-                  >
+                  <div className="p-4 w-72 rounded-xl  transition-all">
                     <div className="text-base font-medium text-[#06044B] mb-0.5">
                       Rush Order
                     </div>
@@ -799,13 +860,41 @@ export default function Component() {
                             <div>
                               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                 {[
-                                  { label: "A4", sub: "8.27 x 11.69 in" },
-                                  { label: "Letter", sub: "8.5 x 11 in" },
-                                  { label: "Legal", sub: "8.5 x 14 in" },
-                                  { label: "A3", sub: "11.69 x 16.53 in" },
-                                  { label: "Tabloid", sub: "11 x 17 in" },
-                                  { label: "Statement", sub: "5.5 x 8.7 in" },
-                                  { label: "A5", sub: "5.83 x 8.27 in" },
+                                  {
+                                    label: "A4",
+                                    paperSize: "A4 (8.27 x 11.69 inches)",
+                                    sub: "8.27 x 11.69 in",
+                                  },
+                                  {
+                                    label: "Letter",
+                                    paperSize: "Letter (8.5 x 11 inches)",
+                                    sub: "8.5 x 11 in",
+                                  },
+                                  {
+                                    label: "Legal",
+                                    paperSize: "Legal (8.5 x 14 inches)",
+                                    sub: "8.5 x 14 in",
+                                  },
+                                  {
+                                    label: "A3",
+                                    paperSize: "A3",
+                                    sub: "11.69 x 16.53 in",
+                                  },
+                                  {
+                                    label: "Tabloid",
+                                    paperSize: "Tabloid",
+                                    sub: "11 x 17 in",
+                                  },
+                                  {
+                                    label: "Statement",
+                                    paperSize: "Statement",
+                                    sub: "5.5 x 8.7 in",
+                                  },
+                                  {
+                                    label: "A5",
+                                    paperSize: "A5",
+                                    sub: "5.83 x 8.27 in",
+                                  },
                                 ].map((option) => {
                                   const isSelected =
                                     selectedPaperSize === option.label;
@@ -814,7 +903,9 @@ export default function Component() {
                                       key={option.label}
                                       type="button"
                                       onClick={() =>
-                                        setSelectedPaperSize(option.label)
+                                        handlePaperSizeChange(
+                                          option.paperSize as DocumentItem["paperSize"]
+                                        )
                                       }
                                       className={`
           w-full flex items-center
@@ -851,7 +942,7 @@ export default function Component() {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    setSelectedPaperType("Standard Paper")
+                                    handlePaperTypeChange("Standard Paper")
                                   }
                                   className={`
       flex flex-col justify-between h-full p-4 rounded-xl border-2 transition-colors
@@ -875,7 +966,7 @@ export default function Component() {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    setSelectedPaperType("Premium Paper")
+                                    handlePaperTypeChange("Premium Paper")
                                   }
                                   className={`
       flex flex-col justify-between h-full p-4 rounded-xl border-2 transition-colors
@@ -904,7 +995,7 @@ export default function Component() {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    setSelectedPaperType("Photo Paper")
+                                    handlePaperTypeChange("Photo Paper")
                                   }
                                   className={`
       flex flex-col justify-between h-full p-4 rounded-xl border-2 transition-colors
@@ -933,7 +1024,7 @@ export default function Component() {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    setSelectedPaperType("Card Stock")
+                                    handlePaperTypeChange("Card Stock")
                                   }
                                   className={`
       flex flex-col justify-between h-full p-4 rounded-xl border-2 transition-colors
@@ -1047,7 +1138,7 @@ export default function Component() {
                   : "border-[#e6e6ed] bg-[#F4F7FA] hover:border-[#3ae180]"
               }
             `}
-                            onClick={() => setSelectedBinding("No Binding")}
+                            onClick={() => handleBindingChange("No Binding")}
                           >
                             <span className="font-medium text-[#06044B] mb-1">
                               No Binding
@@ -1068,7 +1159,9 @@ export default function Component() {
                   : "border-[#e6e6ed] bg-[#F4F7FA] hover:border-[#3ae180]"
               }
             `}
-                            onClick={() => setSelectedBinding("Staple Binding")}
+                            onClick={() =>
+                              handleBindingChange("Staple Binding")
+                            }
                           >
                             <span className="font-medium text-[#06044B] mb-1">
                               Staple Binding
@@ -1089,7 +1182,9 @@ export default function Component() {
                   : "border-[#e6e6ed] bg-[#F4F7FA] hover:border-[#3ae180]"
               }
             `}
-                            onClick={() => setSelectedBinding("Spiral Binding")}
+                            onClick={() =>
+                              handleBindingChange("Spiral Binding")
+                            }
                           >
                             <span className="font-medium text-[#06044B] mb-1">
                               Spiral Binding
@@ -1110,7 +1205,7 @@ export default function Component() {
                   : "border-[#e6e6ed] bg-[#F4F7FA] hover:border-[#3ae180]"
               }
             `}
-                            onClick={() => setSelectedBinding("Comb Binding")}
+                            onClick={() => handleBindingChange("Comb Binding")}
                           >
                             <span className="font-medium text-[#06044B] mb-1">
                               Comb Binding
@@ -1132,7 +1227,7 @@ export default function Component() {
               }
             `}
                             onClick={() =>
-                              setSelectedBinding("Perfect Binding")
+                              handleBindingChange("Perfect Binding")
                             }
                           >
                             <span className="font-medium text-[#06044B] mb-1">
@@ -1160,7 +1255,7 @@ export default function Component() {
               }
             `}
                             onClick={() =>
-                              setSelectedLamination("No Laminations")
+                              handleLaminationChange("No Laminations")
                             }
                           >
                             <span className="font-medium text-[#06044B] mb-1">
@@ -1183,7 +1278,7 @@ export default function Component() {
               }
             `}
                             onClick={() =>
-                              setSelectedLamination("Matte Lamination")
+                              handleLaminationChange("Matte Lamination")
                             }
                           >
                             <span className="font-medium text-[#06044B] mb-1">
@@ -1206,7 +1301,7 @@ export default function Component() {
               }
             `}
                             onClick={() =>
-                              setSelectedLamination("Gloss Lamination")
+                              handleLaminationChange("Gloss Lamination")
                             }
                           >
                             <span className="font-medium text-[#06044B] mb-1">
@@ -1233,7 +1328,7 @@ export default function Component() {
                   : "border-[#e6e6ed] bg-[#F4F7FA] hover:border-[#3ae180]"
               }
             `}
-                            onClick={() => setSelectedCover("No Cover")}
+                            onClick={() => handleCoverChange("No Cover")}
                           >
                             <span className="font-medium text-[#06044B] mb-1">
                               No Cover
@@ -1255,7 +1350,7 @@ export default function Component() {
               }
             `}
                             onClick={() =>
-                              setSelectedCover("Clear Front Cover")
+                              handleCoverChange("Clear Front Cover")
                             }
                           >
                             <span className="font-medium text-[#06044B] mb-1">
@@ -1278,7 +1373,7 @@ export default function Component() {
               }
             `}
                             onClick={() =>
-                              setSelectedCover("Colored Back Cover")
+                              handleCoverChange("Colored Back Cover")
                             }
                           >
                             <span className="font-medium text-[#06044B] mb-1">
@@ -1301,7 +1396,7 @@ export default function Component() {
               }
             `}
                             onClick={() =>
-                              setSelectedCover("Front & Back Covers")
+                              handleCoverChange("Front & Back Covers")
                             }
                           >
                             <span className="font-medium text-[#06044B] mb-1">
