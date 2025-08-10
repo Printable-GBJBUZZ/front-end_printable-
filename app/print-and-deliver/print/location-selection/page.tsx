@@ -31,14 +31,14 @@ import TotalFilesIcon from "@/public/Print&Deliver/TotalFilesIcon";
 import LocationPin from "@/public/Print&Deliver/LocationPin";
 import BookMark from "@/public/Print&Deliver/BookMark";
 import Share from "@/public/Print&Deliver/Share";
-import CartPanel from "./Components/CartPanel";
-import CartPanelProduct from "./Components/CartPanelProduct";
+import CartPanel from "../../../../components/Location-selection/Cart/CartPanel";
+import CartPanelProduct from "../../../../components/Location-selection/Cart/CartPanelProduct";
 import { getTotalDocument } from "../TotalDocument";
-import SummaryBarNotSelected from "./Components/SummaryBarNotSelected";
-import SummaryBarSelected from "./Components/SummaryBarSelected";
+import SummaryBarNotSelected from "../../../../components/Location-selection/SummaryBar/SummaryBarNotSelected";
+import SummaryBarSelected from "@/components/Location-selection/SummaryBar/SummaryBarSelected";
 import { Order } from "@/context/orderContext"; // Make sure this is the correct path
-import BottomNavigation from "./Components/BottomNavigation";
-import MerchantImage from "./Components/MerchantImage";
+import BottomNavigation from "../../../../components/Location-selection/MerchantCard/BottomNavigation";
+import MerchantImage from "../../../../components/Location-selection/MerchantCard/MerchantImage";
 
 interface Merchant {
   merchantId: string;
@@ -319,31 +319,6 @@ export default function LocationSelectionPage() {
   const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
 
   const [isCartOpen, setIsCartOpen] = useState(false);
-
-  // Cart items data (moved from CartPanelProduct)
-  const cartItems = [
-    {
-      id: 1,
-      name: "File 1 - Jay Vasani UX.nh",
-      description: "1 page, Black & White, Portrait",
-      copies: 15,
-      price: 122.5,
-    },
-    {
-      id: 2,
-      name: "Business Card Design",
-      description: "Standard size, Color printing",
-      copies: 100,
-      price: 250.0,
-    },
-    {
-      id: 3,
-      name: "Photo Album",
-      description: "20 pages, Color, Landscape",
-      copies: 2,
-      price: 450.0,
-    },
-  ];
 
   const filteredMerchants = nearbyMerchants.filter((merchant) =>
     merchant.shopName?.toLowerCase().includes(searchQuery.toLowerCase())

@@ -1,8 +1,8 @@
 import React from "react";
 import Location from "@/public/icons/Location";
 interface AddressData {
-  name: string;
-  address: string;
+  name: string | null;
+  address: string | null;
 }
 
 interface DeliveryInfoProps {

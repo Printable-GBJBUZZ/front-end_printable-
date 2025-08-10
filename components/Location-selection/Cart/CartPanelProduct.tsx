@@ -1,6 +1,6 @@
 import CartProductImage from "@/public/Print&Deliver/CartProductImage";
 import { Order } from "@/context/orderContext";
-import { calculateOrderTotals } from "../../pricing";
+import { calculateOrderTotals } from "@/app/print-and-deliver/print/pricing";
 
 export default function CartPanelProduct({ order }: { order: Order }) {
   return (

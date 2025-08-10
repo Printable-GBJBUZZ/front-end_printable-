@@ -1,10 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import DeliveryInfo from "./DeliveryInfo";
 import ShopInfo from "./ShopInfo";
+import { useOrder } from "@/context/orderContext";
+import { calculateOrderTotals } from "@/app/print-and-deliver/print/pricing";
 
 interface AddressData {
-  name: string;
-  address: string;
+  name: string | null;
+  address: string | null;
 }
 
 interface ShopData {
@@ -12,19 +14,55 @@ interface ShopData {
   description: string;
 }
 
+interface Merchant {
+  merchantId: string;
+  shopName: string;
+  latitude: string | null;
+  longitude: string | null;
+  MerchantImages: any[];
+  averageRating: string;
+  ratingCount: number;
+  googleDistance: string;
+  duration: string;
+  durationInTraffic: string;
+  features: string[];
+  address?: string;
+  services?: string[];
+}
+
 interface BottomSectionProps {
-  addressData: AddressData;
-  shopData: ShopData;
-  grandTotal: number;
+  selectedMerchant?: Merchant | null;
+  userName?: string | null;
   onPay?: () => void;
 }
 
 export default function BottomSection({
-  addressData,
-  shopData,
-  grandTotal,
+  selectedMerchant,
+  userName,
   onPay,
 }: BottomSectionProps) {
+  const { order } = useOrder();
+
+  const { subtotal, deliveryCharges, tax, discount, total, categoryTotals } =
+    calculateOrderTotals(order);
+
+  // Create AddressData object from order data and user info
+  const addressData: AddressData = {
+    name: userName || "Customer", // Use actual user name
+    address: order.address || "Address not provided",
+  };
+
+  // Create shop data from selected merchant
+  const shopData: ShopData = {
+    name: selectedMerchant?.shopName || "Print Shop", // Use selected merchant name
+    description: `Total ${
+      order.documents.length
+    } Items (${order.documents.reduce(
+      (sum, doc) => sum + (doc.pages || 1),
+      0
+    )} Pages)`, // More detailed description
+  };
+
   return (
     <div className="px-6 mt-6">
       <Card
@@ -37,7 +75,8 @@ export default function BottomSection({
             <div className="w-full h-px bg-[#61E987] my-2"></div>
             <ShopInfo
               shopData={shopData}
-              grandTotal={grandTotal}
+              selectedMerchant={selectedMerchant}
+              grandTotal={total}
               onPay={onPay}
             />
           </div>

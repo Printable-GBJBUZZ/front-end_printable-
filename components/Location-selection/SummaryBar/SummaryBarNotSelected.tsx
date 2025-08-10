@@ -1,8 +1,8 @@
 import TotalFilesIcon from "@/public/Print&Deliver/TotalFilesIcon";
 import { Button } from "@/components/ui/button";
-import { getTotalDocument } from "../../TotalDocument";
+import { getTotalDocument } from "../../../app/print-and-deliver/print/TotalDocument";
 import { Order } from "@/context/orderContext";
-import getTotalPages from "../../TotalPages";
+import getTotalPages from "../../../app/print-and-deliver/print/TotalPages";
 
 interface SummaryBarNotSelectedProps {
   order: Order;

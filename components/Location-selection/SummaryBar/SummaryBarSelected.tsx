@@ -1,9 +1,9 @@
 import { cn } from "@/lib/utils";
 import TotalFilesIcon from "@/public/Print&Deliver/TotalFilesIcon";
-import { getTotalDocument } from "../../TotalDocument";
+import { getTotalDocument } from "@/app/print-and-deliver/print/TotalDocument";
 import { Button } from "@/components/ui/button";
 import { Order } from "@/context/orderContext";
-import getTotalPages from "../../TotalPages";
+import getTotalPages from "@/app/print-and-deliver/print/TotalPages";
 
 interface SummaryBarSelectedProps {
   idx: number;

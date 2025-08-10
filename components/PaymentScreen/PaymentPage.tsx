@@ -7,6 +7,7 @@ import OrderSummarySection from "./OrderSummarySection/OrderSummarySection";
 import BottomSection from "./BottomSection/BottomSection";
 import OrderConformation from "./BottomSection/OrderConformation";
 import { useOrder } from "@/context/orderContext";
+import { calculateOrderTotals } from "@/app/print-and-deliver/print/pricing";
 
 interface OrderSummary {
   subtotal: number;
@@ -52,24 +53,6 @@ export default function PaymentPage() {
     // Your promo code logic (if any)
   };
 
-  const addressData: AddressData = {
-    name: "Jay",
-    address: "184 Surthana Jakat Naka, Nana Varachha Surat, Gujarat, India",
-  };
-
-  const orderSummary: OrderSummary = {
-    subtotal: 750,
-    deliveryCharges: 20,
-    taxRate: 8,
-    tax: 18.0,
-    grandTotal: 768.0,
-  };
-
-  const shopData: ShopData = {
-    name: "Print Master Shop",
-    description: "Total 3 Items (25 Pages)",
-  };
-
   const cardFormData = {
     cardNumber,
     setCardNumber,
@@ -111,6 +94,9 @@ export default function PaymentPage() {
   const handleCloseOrderModal = () => {
     setShowOrderModal(false);
   };
+
+  const { subtotal, deliveryCharges, tax, total, categoryTotals } =
+    calculateOrderTotals(order);
 
   return (
     <>
@@ -174,9 +160,6 @@ export default function PaymentPage() {
             <div className="mt-10">
               <div className="px-6 mt-10">
                 <BottomSection
-                  addressData={addressData}
-                  shopData={shopData}
-                  grandTotal={orderSummary.grandTotal}
                   onPay={handlePay}
                 />
               </div>
@@ -201,7 +184,7 @@ export default function PaymentPage() {
                 paymentMethodLabels[selectedMethod] || selectedMethod
               }
               paymentStatus="Confirmed"
-              Total={orderSummary.grandTotal}
+              Total={total}
               deliveryMode=""
               onClose={handleCloseOrderModal}
             />

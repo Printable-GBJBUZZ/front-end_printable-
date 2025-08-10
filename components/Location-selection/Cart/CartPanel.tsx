@@ -1,10 +1,10 @@
 import { X } from "lucide-react";
 import Store from "@/public/Print&Deliver/Store";
 import CartPanelProduct from "./CartPanelProduct";
-import { getTotalDocument } from "../../TotalDocument";
+import { getTotalDocument } from "../../../app/print-and-deliver/print/TotalDocument";
 import { Order } from "@/context/orderContext";
-import { calculateOrderTotals } from "../../pricing";
-import MerchantImage from "./MerchantImage";
+import { calculateOrderTotals } from "../../../app/print-and-deliver/print/pricing";
+import MerchantImage from "../MerchantCard/MerchantImage";
 import Link from "next/link";
 
 
