@@ -1,6 +1,4 @@
-import React from 'react'
-
-const Secure = () => {
+export default function Secure(){
   return (
     <div>
       <svg
@@ -21,5 +19,3 @@ const Secure = () => {
     </div>
   );
 }
-
-export default Secure

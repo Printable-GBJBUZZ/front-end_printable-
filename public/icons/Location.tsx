@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Location = () => {
+export default function Location(){
   return (
     <div>
       <svg
@@ -20,5 +20,3 @@ const Location = () => {
     </div>
   );
 }
-
-export default Location

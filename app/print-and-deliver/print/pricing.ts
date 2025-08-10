@@ -12,10 +12,11 @@ function normalize(val: string | undefined | null): string {
 
 export function calculatePriceBreakdown(
   documents: DocumentItem[]
-): PriceBreakdownItem[] {
-  const breakdown: PriceBreakdownItem[] = [];
+): (PriceBreakdownItem & { docId: string })[] {
+  const breakdown: (PriceBreakdownItem & { docId: string })[] = [];
 
   documents.forEach((doc, index) => {
+    const docId = doc.id ?? index.toString(); // use doc.id or fallback to index string
 
     // Normalized price maps (all lowercase)
     const paperSizePrices: Record<string, number> = {
@@ -79,6 +80,7 @@ export function calculatePriceBreakdown(
         unitPrice: paperSizePrice,
         quantity: copies,
         total: paperSizePrice * copies,
+        docId,
       });
     }
 
@@ -90,6 +92,7 @@ export function calculatePriceBreakdown(
         unitPrice: paperTypePrice,
         quantity: copies,
         total: paperTypePrice * copies,
+        docId,
       });
     }
 
@@ -101,6 +104,7 @@ export function calculatePriceBreakdown(
         unitPrice: colorPrice,
         quantity: copies,
         total: colorPrice * copies,
+        docId,
       });
     }
 
@@ -112,6 +116,7 @@ export function calculatePriceBreakdown(
         unitPrice: bindingPrice,
         quantity: 1,
         total: bindingPrice,
+        docId,
       });
     }
 
@@ -123,6 +128,7 @@ export function calculatePriceBreakdown(
         unitPrice: laminationPrice,
         quantity: copies,
         total: laminationPrice * copies,
+        docId,
       });
     }
 
@@ -134,6 +140,7 @@ export function calculatePriceBreakdown(
         unitPrice: coverPrice,
         quantity: 1,
         total: coverPrice,
+        docId,
       });
     }
 
@@ -144,6 +151,7 @@ export function calculatePriceBreakdown(
         unitPrice: 10,
         quantity: 1,
         total: 10,
+        docId,
       });
     }
 
@@ -154,12 +162,14 @@ export function calculatePriceBreakdown(
         unitPrice: 20,
         quantity: 1,
         total: 20,
+        docId,
       });
     }
   });
 
   return breakdown;
 }
+
 
 export function calculateOrderTotals(order: Order) {
   // CRITICAL FIX: Always recalculate from documents

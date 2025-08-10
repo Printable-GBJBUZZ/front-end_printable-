@@ -73,9 +73,10 @@ export default function PaymentMethodSection({
         bankingFormData={bankingFormData}
       />
 
-          <p className=" flex text-center text-green-600 text-sm mt-10 justify-center gap-3">
-              <Secure />
-         Secure Payment
+      <p className=" flex text-center text-green-600 text-sm mt-10 justify-center gap-3">
+        {/* ERROR HERE */}
+        <Secure />
+        Secure Payment
       </p>
     </div>
   );

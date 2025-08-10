@@ -6,6 +6,7 @@ import PromoCodeSection from "./PromoCodeSection/PromoCodeSection";
 import OrderSummarySection from "./OrderSummarySection/OrderSummarySection";
 import BottomSection from "./BottomSection/BottomSection";
 import OrderConformation from "./BottomSection/OrderConformation";
+import { useOrder } from "@/context/orderContext";
 
 interface OrderSummary {
   subtotal: number;
@@ -26,6 +27,9 @@ interface ShopData {
 }
 
 export default function PaymentPage() {
+
+  const {order} = useOrder();
+
   const [selectedMethod, setSelectedMethod] = useState("wallet");
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(15.5);
@@ -162,8 +166,7 @@ export default function PaymentPage() {
                   style={{ top: "2rem", position: "sticky" }}
                 >
                   <OrderSummarySection
-                    orderSummary={orderSummary}
-                    discount={discount}
+                  order={order}
                   />
                 </div>
               </div>

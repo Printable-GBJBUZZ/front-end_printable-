@@ -1,22 +1,13 @@
 import OrderItems from "./OrderItems";
+import { Order } from "@/context/orderContext";
 import BillSummary from "./BillSummary";
 
-interface OrderSummary {
-  subtotal: number;
-  deliveryCharges: number;
-  taxRate: number;
-  tax: number;
-  grandTotal: number;
-}
-
 interface OrderSummarySectionProps {
-  orderSummary: OrderSummary;
-  discount: number;
+  order: Order;
 }
 
 export default function OrderSummarySection({
-  orderSummary,
-  discount,
+  order,
 }: OrderSummarySectionProps) {
   return (
     <div
@@ -44,7 +35,7 @@ export default function OrderSummarySection({
 
       {/* Bill Summary Section */}
       <div>
-        <BillSummary orderSummary={orderSummary} discount={discount} />
+        <BillSummary order={order} />
       </div>
     </div>
   );

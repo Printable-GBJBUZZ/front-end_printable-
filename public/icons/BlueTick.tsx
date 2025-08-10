@@ -1,6 +1,6 @@
 import React from 'react'
 
-const BlueTick = () => {
+export default function BlueTick(){
   return (
     <div>
       <svg
@@ -22,5 +22,3 @@ const BlueTick = () => {
     </div>
   );
 }
-
-export default BlueTick

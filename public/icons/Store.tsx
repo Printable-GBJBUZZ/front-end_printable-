@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Store = () => {
+export default function Store(){
   return (
     <div>
       <svg
@@ -18,5 +18,3 @@ const Store = () => {
     </div>
   );
 }
-
-export default Store

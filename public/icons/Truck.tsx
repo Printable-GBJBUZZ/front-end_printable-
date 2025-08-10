@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Truck = () => {
+export default function Truck(){
   return (
     <div>
       <svg
@@ -18,5 +18,3 @@ const Truck = () => {
     </div>
   );
 }
-
-export default Truck
