@@ -40,15 +40,22 @@ export default function UseStorage() {
       const newDoc: DocumentItem = {
         id: data.fileId,
         fileName: file.name,
-        fileUrl: data.fileUrl,
+        fileUrl: "",
         size: file.size,
         copies: 1,
-        colorType: "black and white",
+        colorType: "Black and White",
         paperSize: "A4 (8.27 x 11.69 inches)",
         printType: "front",
-        pageDirection: "vertical",
+        pageDirection: "Vertical",
         pagesToPrint: "All",
-        pages: pageCount,
+        pages: 1,
+        paperType: "Standard Paper", // default or fallback value
+        bindingType: "No Binding",   // default or fallback value
+        laminationType: "No Laminations",// default or fallback value
+        coverType: "No Cover",     // default or fallback value
+        confidentialPrint: false,   // default value
+        fileReview: false,          // default value
+        rushOrder: false,  
       };
 
       dispatch({ type: "ADD_DOCUMENT", payload: newDoc });
@@ -62,13 +69,21 @@ export default function UseStorage() {
         fileUrl: "",
         size: file.size,
         copies: 1,
-        colorType: "black and white",
+        colorType: "Black and White",
         paperSize: "A4 (8.27 x 11.69 inches)",
         printType: "front",
-        pageDirection: "vertical",
+        pageDirection: "Vertical",
         pagesToPrint: "All",
         error: err.message || String(err),
         pages: 1,
+        paperType: "Standard Paper", // default or fallback value
+        bindingType: "No Binding",   // default or fallback value
+        laminationType: "No Laminations",// default or fallback value
+        coverType: "No Cover",     // default or fallback value
+        confidentialPrint: false,   // default value
+        fileReview: false,          // default value
+        rushOrder: false,           // default value
+        // Add other required properties with default values if needed
       };
 
       dispatch({ type: "ADD_DOCUMENT", payload: errorDoc });

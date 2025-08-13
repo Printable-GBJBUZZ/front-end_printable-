@@ -67,12 +67,20 @@ const FileSection: React.FC<FileSectionProps> = ({
           fileName: file.fileName,
           fileUrl: file.fileUrl,
           copies: 1,
-          colorType: "black and white", // Match exact type string
+          colorType: "Black and White", // Match exact type string
           paperSize: "A4 (8.27 x 11.69 inches)", // Match exact type string
           printType: "front",
-          pageDirection: "vertical",
+          pageDirection: "Vertical",
           pagesToPrint: "All", // <<<---- ADDED DEFAULT
           size: file.fileSize,
+          paperType: "Standard Paper", // Default value, adjust as needed
+          bindingType: "No Binding", // Default value, adjust as needed
+          laminationType: "No Laminations", // Default value, adjust as needed
+          coverType: "No Cover", // Default value, adjust as needed
+          // printSides: "Single", // Default value, adjust as needed
+          confidentialPrint: false, // Default value, adjust as needed
+          fileReview: false, // Default value, adjust as needed
+          rushOrder: false, // Default value, adjust as needed
         };
         dispatch({ type: "ADD_DOCUMENT", payload: newDoc });
         break;

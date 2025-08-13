@@ -14,7 +14,7 @@ interface CardFormData {
   cardNick: string;
   setCardNick: (value: string) => void;
   showCVV: boolean;
-  setShowCVV: (value: boolean) => void;
+  setShowCVV: (value: boolean | ((prev: boolean) => boolean)) => void;
 }
 
 interface BankingFormData {
