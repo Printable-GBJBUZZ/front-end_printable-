@@ -227,6 +227,7 @@ export function calculateOrderTotals(order: Order) {
 
   // Final total
   const total = subtotal + deliveryCharges + tax - discount;
+  // const total = 1;
 
 
   return {
